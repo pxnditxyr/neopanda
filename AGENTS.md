@@ -10,4 +10,4 @@
 - `NVIM_APPNAME=neopanda`: config is `stdpath("config")`, not `~/.config/nvim`.
 - `nvim-pack-lock.json` is written by vim.pack; never edit it by hand.
 - Lines marked `-- DEV:` are dev-only notes, stripped on stage by a local git filter; keep that marker for TODO-style notes.
-- `lua/pxndxs/features_local.lua` is per-machine and gitignored.
+- `pxndxs.env` holds detected facts (read-only); `pxndxs.settings` holds toggles, overridden per machine by the gitignored `lua/pxndxs/settings_local.lua`.

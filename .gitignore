@@ -3,4 +3,4 @@ result
 result-*
 
 # per-machine overrides
-lua/pxndxs/features_local.lua
+lua/pxndxs/settings_local.lua
