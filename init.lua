@@ -1,0 +1,2 @@
+-- neopanda 🐼
+vim.loader.enable()

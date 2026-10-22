@@ -1,0 +1,6 @@
+# nix
+result
+result-*
+
+# per-machine overrides
+lua/pxndxs/features_local.lua
