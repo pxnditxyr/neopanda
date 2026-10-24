@@ -6,6 +6,10 @@ map("n", "<Esc>", "<Cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 map("n", "n", "nzzzv", { desc = "Next match (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous match (centered)" })
 
+-- Spell: ]s/[s is a same-finger jump on Dvorak (gs is :sleep natively)
+map({ "n", "x", "o" }, "gs", "]s", { desc = "Next misspelled word" })
+map({ "n", "x", "o" }, "gS", "[s", { desc = "Previous misspelled word" })
+
 -- Editing
 map("n", "J", function()
   local pos = vim.api.nvim_win_get_cursor(0)

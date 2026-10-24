@@ -11,3 +11,4 @@
 - `nvim-pack-lock.json` is written by vim.pack; never edit it by hand.
 - Lines marked `-- DEV:` are dev-only notes, stripped on stage by a local git filter; keep that marker for TODO-style notes.
 - `pxndxs.env` holds detected facts (read-only); `pxndxs.settings` holds toggles, overridden per machine by the gitignored `lua/pxndxs/settings_local.lua`.
+- The author types Dvorak US: avoid maps where `[`/`]` (right pinky, number row) is followed by another right-pinky key (`s`, `l`, `z`, `-`, `/`); prefer aliases like `gs`/`gS` for `]s`/`[s`.
