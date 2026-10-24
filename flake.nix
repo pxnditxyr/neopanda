@@ -39,6 +39,19 @@
             git # vim.pack
             ripgrep # 'grepprg'
             fd # 'findfunc'
+            # LSP servers (lsp/*.lua)
+            emmylua-ls # Lua
+            nixd # Nix
+            nixfmt # nixd formatting
+            vtsls # TypeScript / JavaScript
+            basedpyright # Python types
+            ruff # Python lint / format
+            bash-language-server # Shell
+            shellcheck # bashls diagnostics
+            vscode-langservers-extracted # JSON
+            yaml-language-server # YAML
+            taplo # TOML
+            marksman # Markdown
           ];
           # Only exposes npd and neopanda; never shadows a system `nvim`.
           neopanda =
