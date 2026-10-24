@@ -3,6 +3,7 @@
 local defaults = {
   ui2 = true,
   autoformat = true,
+  nerd_font = true, -- false: plain letters instead of icons
 }
 
 local ok, overrides = pcall(require, "pxndxs.settings_local")
