@@ -4,7 +4,7 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("pxndxs." .. name, {})
 end
 
--- Highlight yanked and put text (TextPutPost and hl_op are 0.13+)
+-- Highlight yanked and put text (TextPutPost is 0.13+)
 local hl_events = { "TextYankPost" }
 if vim.fn.exists("##TextPutPost") == 1 then
   table.insert(hl_events, "TextPutPost")
@@ -13,11 +13,7 @@ autocmd(hl_events, {
   group = augroup("highlight_op"),
   desc = "Highlight yanked and put text",
   callback = function()
-    if vim.hl.hl_op then
-      vim.hl.hl_op()
-    else
-      vim.hl.on_yank()
-    end
+    vim.hl.hl_op()
   end,
 })
 
@@ -94,10 +90,11 @@ autocmd("FileType", {
   pattern = { "markdown", "text", "gitcommit" },
   desc = "Spell and wrap for prose",
   callback = function(args)
-    vim.opt_local.spell = true
-    vim.opt_local.wrap = true
+    local wo = vim.wo[0][0] -- :setlocal
+    wo.spell = true
+    wo.wrap = true
     if args.match == "markdown" then
-      vim.opt_local.conceallevel = 2
+      wo.conceallevel = 2
     end
   end,
 })

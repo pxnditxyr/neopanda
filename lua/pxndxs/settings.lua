@@ -1,5 +1,11 @@
 -- User toggles. Per-machine overrides go in settings_local.lua (gitignored),
 -- which returns a table merged over these defaults.
+---@class pxndxs.Settings
+---@field ui2 boolean
+---@field autoformat boolean
+---@field nerd_font boolean
+
+---@type pxndxs.Settings
 local defaults = {
   ui2 = true,
   autoformat = true,
@@ -14,4 +20,6 @@ if not ok then
   return defaults
 end
 
-return vim.tbl_extend("force", defaults, type(overrides) == "table" and overrides or {})
+---@type pxndxs.Settings
+local settings = vim.tbl_extend("force", defaults, type(overrides) == "table" and overrides or {})
+return settings
