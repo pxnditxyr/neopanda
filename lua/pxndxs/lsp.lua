@@ -28,7 +28,7 @@ autocmd("LspAttach", {
       vim.lsp.completion.enable(true, client.id, buf, { autotrigger = false })
     end
 
-    -- LSP folding for the window showing this buffer (treesitter folding comes in step 9)
+    -- LSP folding for the window showing this buffer (overrides treesitter folding)
     if client:supports_method("textDocument/foldingRange") then
       local win = vim.api.nvim_get_current_win()
       if vim.api.nvim_win_get_buf(win) == buf then
