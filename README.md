@@ -16,7 +16,7 @@ Add the flake as an input and enable the module. The config dir is a symlink to 
 
 ```nix
 # flake.nix
-inputs.neopanda.url = "github:<owner>/neopanda";
+inputs.neopanda.url = "github:pxnditxyr/neopanda";
 
 # home-manager
 imports = [ inputs.neopanda.homeModules.default ];
@@ -31,7 +31,7 @@ The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd a
 ### Ubuntu / WSL2 (no Nix)
 
 ```sh
-git clone https://github.com/<owner>/neopanda ~/dev/neopanda
+git clone https://github.com/pxnditxyr/neopanda ~/dev/neopanda
 ~/dev/neopanda/scripts/bootstrap.sh --dry-run   # preview
 ~/dev/neopanda/scripts/bootstrap.sh
 ```
