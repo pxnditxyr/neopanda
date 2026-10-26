@@ -1,0 +1,8 @@
+{
+  "plugins": {
+    "lze": {
+      "rev": "5020f28b13055a9cb3f51ab8b2cfefcd069dd3f7",
+      "src": "https://github.com/BirdeeHub/lze"
+    }
+  }
+}

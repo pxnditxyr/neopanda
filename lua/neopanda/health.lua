@@ -114,7 +114,7 @@ local function plugins()
   local ok, data = pcall(vim.json.decode, table.concat(vim.fn.readfile(lockfile), "\n"))
   if ok and type(data) == "table" then
     health.ok(
-      pad("Lockfile", 12) .. ("%d plugins pinned"):format(vim.tbl_count(data.plugins or {}))
+      pad("Lockfile", 12) .. ("%d pinned"):format(vim.tbl_count(data.plugins or {}))
     )
   else
     health.error(pad("Lockfile", 12) .. "invalid JSON", "git checkout -- nvim-pack-lock.json")

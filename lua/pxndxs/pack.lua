@@ -27,10 +27,12 @@ vim.api.nvim_create_autocmd("PackChanged", {
   end,
 })
 
----@type vim.pack.Spec[]
-local specs = {}
+---@type (string|vim.pack.Spec)[]
+local specs = {
+  "https://github.com/BirdeeHub/lze",
+}
 
--- An empty add creates the plugin directory without a lockfile, which :checkhealth warns about
-if #specs > 0 then
-  vim.pack.add(specs)
-end
+-- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/
+vim.pack.add(specs, { load = function() end })
+vim.cmd.packadd("lze")
+require("lze").load({ import = "pxndxs.plugins" })
