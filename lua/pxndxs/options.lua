@@ -70,6 +70,20 @@ vim.opt.wildoptions:append("fuzzy")
 vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
+-- Over SSH, copy with OSC 52: setting 'clipboard' turns off its auto-detection, and on a remote
+-- mac pbcopy would copy there. Terminals often block OSC 52 reads, so paste uses the unnamed register.
+if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
+  local osc52 = require("vim.ui.clipboard.osc52")
+  local function paste()
+    return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+  end
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+    paste = { ["+"] = paste, ["*"] = paste },
+  }
+end
+
 -- Deferred: loading the clipboard provider costs startup time.
 vim.schedule(function()
   vim.o.clipboard = "unnamedplus"
