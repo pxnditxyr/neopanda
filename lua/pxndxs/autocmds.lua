@@ -71,7 +71,6 @@ autocmd("BufWritePre", {
   end,
 })
 
--- Create missing parent directories on save
 autocmd("BufWritePre", {
   group = augroup("mkdir_on_save"),
   desc = "Create parent directories",
@@ -99,7 +98,6 @@ autocmd("FileType", {
   end,
 })
 
--- Equalize splits in every tab when the terminal is resized
 autocmd("VimResized", {
   group = augroup("equalize_splits"),
   desc = "Equalize splits",
