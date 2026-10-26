@@ -1,0 +1,38 @@
+name: CI
+
+# Manual only for now (Actions tab → CI → Run workflow).
+# To run on every change, add `push:` and `pull_request:` here.
+on:
+  workflow_dispatch:
+
+jobs:
+  nix:
+    name: Nix (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+        with:
+          # Use the flake's nix-community cache instead of building Neovim nightly
+          extra_nix_config: accept-flake-config = true
+      - run: nix flake check
+      - run: nix build
+      - name: Link config
+        run: mkdir -p ~/.config && ln -s "$PWD" ~/.config/neopanda
+      - name: Smoke test
+        run: nix develop -c env NVIM="$PWD/result/bin/npd" scripts/smoke-test.sh
+
+  bootstrap:
+    name: Bootstrap (Ubuntu, no Nix)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: scripts/bootstrap.sh
+      - name: Run bootstrap again (idempotent)
+        run: scripts/bootstrap.sh
+      - name: Smoke test
+        run: PATH="$HOME/.local/bin:$HOME/.local/share/bob/nvim-bin:$PATH" scripts/smoke-test.sh
