@@ -81,6 +81,7 @@
         default = pkgs.mkShell {
           packages = with pkgs; [
             stylua
+            shellcheck
             lua-language-server
             nixd
           ];
