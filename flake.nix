@@ -39,6 +39,8 @@
             git # vim.pack
             ripgrep # 'grepprg'
             fd # 'findfunc'
+            tree-sitter # nvim-treesitter parser builds
+            stdenv.cc # C compiler for parsers
             # LSP servers (lsp/*.lua)
             emmylua-ls # Lua
             nixd # Nix

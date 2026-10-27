@@ -67,13 +67,15 @@ local function tools()
     { "git", health.error, "vim.pack needs git" },
     { "rg", health.warn, ":grep falls back to the internal grep" },
     { "fd", health.warn, ":find falls back to rg --files" },
+    { "tree-sitter", health.warn, "nvim-treesitter needs it (0.26.1+) to build parsers" },
+    { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
   }
   for _, tool in ipairs(list) do
     local bin, report, advice = unpack(tool)
     if vim.fn.executable(bin) == 1 then
-      health.ok(pad(bin, 6) .. version_of(bin))
+      health.ok(pad(bin, 12) .. version_of(bin))
     else
-      report(pad(bin, 6) .. "not found", advice)
+      report(pad(bin, 12) .. "not found", advice)
     end
   end
 end

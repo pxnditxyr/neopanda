@@ -8,6 +8,12 @@ declare -A BOB_SHA256=(
   [x86_64]="c5eb4341f10030eab6aa5ea7363afbee27d1c0835dba29447d3150ebab8f3f1a"
   [arm]="60f9739b3450c6d8c28067e7b88126442dde1d97c614c7c621109e0260b9bae3"
 )
+# nvim-treesitter needs tree-sitter-cli 0.26.1+; apt's is older
+TS_VERSION="v0.27.1"
+declare -A TS_SHA256=(
+  [x64]="c7e686aec16ba17053c2e6fd87600ccb10cf8ba3d055756b17e756d538e11114"
+  [arm64]="3c0d0113cae3fea36f2336c271cbdacbcdb349edb006319155652b9386803c55"
+)
 # nodejs/npm and python3-venv: Mason installs some LSP servers through npm and pip
 APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip nodejs npm python3-venv)
 
@@ -88,6 +94,34 @@ install_bob() {
   rm -rf "$tmp"
 }
 
+install_tree_sitter() {
+  if [[ -x "$BIN_DIR/tree-sitter" ]]; then
+    log "tree-sitter already installed"
+    return
+  fi
+  local arch
+  case "$(uname -m)" in
+    x86_64) arch="x64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      echo "unsupported architecture: $(uname -m)" >&2
+      exit 1
+      ;;
+  esac
+  local name="tree-sitter-cli-linux-$arch"
+  local tmp
+  tmp="$(mktemp -d)"
+  log "installing tree-sitter $TS_VERSION ($arch)"
+  run curl -fsSL -o "$tmp/$name.zip" "https://github.com/tree-sitter/tree-sitter/releases/download/$TS_VERSION/$name.zip"
+  if ((!DRY_RUN)); then
+    echo "${TS_SHA256[$arch]}  $tmp/$name.zip" | sha256sum --check --quiet
+  fi
+  run unzip -q "$tmp/$name.zip" -d "$tmp"
+  run mkdir -p "$BIN_DIR"
+  run install -m 755 "$tmp/tree-sitter" "$BIN_DIR/tree-sitter"
+  rm -rf "$tmp"
+}
+
 install_neovim() {
   log "installing Neovim nightly with bob"
   run env PATH="$BIN_DIR:$PATH" bob use nightly
@@ -144,6 +178,7 @@ main() {
   install_packages
   link_fd
   install_bob
+  install_tree_sitter
   install_neovim
   link_config
   setup_shell

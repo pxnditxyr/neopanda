@@ -7,6 +7,36 @@
     "mason.nvim": {
       "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
       "src": "https://github.com/mason-org/mason.nvim"
+    },
+    "nvim-treesitter": {
+      "rev": "a2f694478be07f89c2d03cc17858a8745a400c4b",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
+      "version": "'main'"
+    },
+    "nvim-treesitter-context": {
+      "rev": "8decd73460d26ef0a0befb745d022dd1fc2c38b8",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter-context"
+    },
+    "nvim-treesitter-textobjects": {
+      "rev": "5c7b0263797dfd1bd6202f2b219f3b53a80b2187",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
+      "version": "'main'"
+    },
+    "nvim-ts-autotag": {
+      "rev": "d7220b55e16ed3c04e88086256def5d282429493",
+      "src": "https://github.com/windwp/nvim-ts-autotag"
+    },
+    "rainbow-delimiters.nvim": {
+      "rev": "b55decda611755171bc5bf8f4c99603a75de4b41",
+      "src": "https://github.com/HiPhish/rainbow-delimiters.nvim"
+    },
+    "treesj": {
+      "rev": "9f349ba62c524f065d6f43254d731ddf8319b9bf",
+      "src": "https://github.com/Wansmer/treesj"
+    },
+    "ts-comments.nvim": {
+      "rev": "a59d6092213447450191122c9346f309161504cb",
+      "src": "https://github.com/folke/ts-comments.nvim"
     }
   }
 }
