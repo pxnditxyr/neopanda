@@ -8,7 +8,8 @@ declare -A BOB_SHA256=(
   [x86_64]="c5eb4341f10030eab6aa5ea7363afbee27d1c0835dba29447d3150ebab8f3f1a"
   [arm]="60f9739b3450c6d8c28067e7b88126442dde1d97c614c7c621109e0260b9bae3"
 )
-APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip)
+# nodejs/npm and python3-venv: Mason installs some LSP servers through npm and pip
+APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip nodejs npm python3-venv)
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/neopanda"

@@ -92,7 +92,8 @@ local function lsp_servers()
     else
       health.warn(
         pad(name, 14) .. "not installed · server skipped",
-        bin and ("put `" .. bin .. "` on PATH") or nil
+        env.is_nix and bin and ("put `" .. bin .. "` on PATH")
+          or "install it with :Mason if it is there (nixd is Nix only)"
       )
     end
   end
@@ -113,9 +114,7 @@ local function plugins()
   end
   local ok, data = pcall(vim.json.decode, table.concat(vim.fn.readfile(lockfile), "\n"))
   if ok and type(data) == "table" then
-    health.ok(
-      pad("Lockfile", 12) .. ("%d pinned"):format(vim.tbl_count(data.plugins or {}))
-    )
+    health.ok(pad("Lockfile", 12) .. ("%d pinned"):format(vim.tbl_count(data.plugins or {})))
   else
     health.error(pad("Lockfile", 12) .. "invalid JSON", "git checkout -- nvim-pack-lock.json")
   end

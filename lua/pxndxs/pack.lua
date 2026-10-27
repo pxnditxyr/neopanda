@@ -30,6 +30,7 @@ vim.api.nvim_create_autocmd("PackChanged", {
 ---@type (string|vim.pack.Spec)[]
 local specs = {
   "https://github.com/BirdeeHub/lze",
+  "https://github.com/mason-org/mason.nvim",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/

@@ -69,6 +69,11 @@ vim.lsp.on_type_formatting.enable(true)
 
 vim.lsp.config("*", { root_markers = { ".git" } })
 
+-- Without Nix, servers come from Mason: its bin must be on PATH before the check below
+if not require("pxndxs.env").is_nix then
+  vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
+end
+
 -- Enable only the servers whose binary is installed
 local servers = {
   "emmylua_ls",
