@@ -8,6 +8,7 @@ return {
   settings = {
     gopls = {
       semanticTokens = true,
+      gofumpt = true,
       hints = {
         assignVariableTypes = true,
         compositeLiteralFields = true,

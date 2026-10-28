@@ -52,6 +52,7 @@
               ruff # Python lint / format
               bash-language-server # Shell
               shellcheck # bashls diagnostics
+              shfmt # bashls formatting
               vscode-langservers-extracted # JSON
               yaml-language-server # YAML
               taplo # TOML

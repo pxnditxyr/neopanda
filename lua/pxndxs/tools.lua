@@ -7,6 +7,7 @@ local tools = {
   "vtsls",
   "bash-language-server",
   "shellcheck",
+  "shfmt",
   "json-lsp",
   "yaml-language-server",
   "taplo",

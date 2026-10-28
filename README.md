@@ -63,7 +63,7 @@ Per-machine overrides go in `lua/pxndxs/settings_local.lua` (gitignored), merged
 ```lua
 return {
   ui2 = true,        -- experimental message/cmdline UI
-  autoformat = true, -- format on save (once a formatter is added)
+  autoformat = true, -- format on save (toggle: <leader>uf, buffer: <leader>uF)
   nerd_font = true,  -- icons in diagnostic signs; false = plain letters
 }
 ```
@@ -102,6 +102,9 @@ projects that use them. Dart/Flutter: flutter-tools.nvim starts dartls from the 
 Off Nix, rust-analyzer comes from `rustup component add rust-analyzer`.
 On Linux, servers learn about new files through `inotifywait`: keep WSL projects under `~` (not `/mnt/c`), and
 raise `fs.inotify.max_user_watches` with sysctl if you see "no space left on device".
+
+Saving formats through the buffer's LSP server (one per buffer: biome when the project has `biome.json`).
+`<leader>uf` toggles format on save, `<leader>uF` only for the current buffer. Markdown is not formatted.
 
 ## Plugins (vim.pack)
 
