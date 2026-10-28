@@ -14,8 +14,15 @@ declare -A TS_SHA256=(
   [x64]="c7e686aec16ba17053c2e6fd87600ccb10cf8ba3d055756b17e756d538e11114"
   [arm64]="3c0d0113cae3fea36f2336c271cbdacbcdb349edb006319155652b9386803c55"
 )
-# nodejs/npm and python3-venv: Mason installs some LSP servers through npm and pip
-APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip inotify-tools nodejs npm python3-venv)
+# Mason installs some LSP servers through npm; apt's nodejs (18) is too old for them
+NODE_MIN_MAJOR=22
+NODE_VERSION="v26.12.1"
+declare -A NODE_SHA256=(
+  [x64]="6170b2d474e1c626f43cff3adc118df9fe3b573258a4fc3d850c8dbc6b079bbd"
+  [arm64]="42aa04922591ee5d4dbc7740d452621acf28508239daa512f5ee8c47ee224fdb"
+)
+# python3-venv: Mason installs some LSP servers through pip
+APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xz-utils xclip inotify-tools python3-venv)
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/neopanda"
@@ -122,6 +129,36 @@ install_tree_sitter() {
   rm -rf "$tmp"
 }
 
+# Keeps any Node >= NODE_MIN_MAJOR already installed; otherwise installs NODE_VERSION into ~/.local
+install_node() {
+  local node
+  node="$(PATH="$BIN_DIR:$PATH" command -v node || true)"
+  if [[ -n "$node" ]] && (($("$node" -p 'process.versions.node.split(".")[0]') >= NODE_MIN_MAJOR)); then
+    log "node $("$node" --version) already installed"
+    return
+  fi
+  local arch
+  case "$(uname -m)" in
+    x86_64) arch="x64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      echo "unsupported architecture: $(uname -m)" >&2
+      exit 1
+      ;;
+  esac
+  local name="node-$NODE_VERSION-linux-$arch.tar.xz"
+  local tmp
+  tmp="$(mktemp -d)"
+  log "installing Node $NODE_VERSION ($arch) into $HOME/.local"
+  run curl -fsSL -o "$tmp/$name" "https://nodejs.org/dist/$NODE_VERSION/$name"
+  if ((!DRY_RUN)); then
+    echo "${NODE_SHA256[$arch]}  $tmp/$name" | sha256sum --check --quiet
+  fi
+  run mkdir -p "$HOME/.local"
+  run tar -xJf "$tmp/$name" -C "$HOME/.local" --strip-components=1 --exclude='*/README.md' --exclude='*/LICENSE' --exclude='*/CHANGELOG.md'
+  rm -rf "$tmp"
+}
+
 install_neovim() {
   log "installing Neovim nightly with bob"
   run env PATH="$BIN_DIR:$PATH" bob use nightly
@@ -179,6 +216,7 @@ main() {
   link_fd
   install_bob
   install_tree_sitter
+  install_node
   install_neovim
   link_config
   setup_shell

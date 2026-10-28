@@ -38,8 +38,9 @@ git clone https://github.com/pxnditxyr/neopanda ~/dev/neopanda
 
 The script is safe to re-run. It:
 
-- installs `git ripgrep fd-find build-essential curl unzip xclip inotify-tools` with apt and links `fd` → `fdfind`;
+- installs `git ripgrep fd-find build-essential curl unzip xz-utils xclip inotify-tools` with apt and links `fd` → `fdfind`;
 - installs [bob](https://github.com/MordechaiHadad/bob) from a checksum-verified release, then Neovim nightly;
+- keeps Node 22+ if present, else installs a checksum-verified Node 26 into `~/.local` (Mason needs it);
 - moves an existing `~/.config/neopanda` (and its data, state and cache) to `*.bak.<timestamp>`;
 - links `~/.config/neopanda` to the clone;
 - adds `PATH` and `alias npd='NVIM_APPNAME=neopanda nvim'` to `~/.bashrc` / `~/.zshrc`.
