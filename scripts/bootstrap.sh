@@ -15,7 +15,7 @@ declare -A TS_SHA256=(
   [arm64]="3c0d0113cae3fea36f2336c271cbdacbcdb349edb006319155652b9386803c55"
 )
 # nodejs/npm and python3-venv: Mason installs some LSP servers through npm and pip
-APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip nodejs npm python3-venv)
+APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xclip inotify-tools nodejs npm python3-venv)
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/neopanda"

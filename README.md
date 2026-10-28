@@ -38,7 +38,7 @@ git clone https://github.com/pxnditxyr/neopanda ~/dev/neopanda
 
 The script is safe to re-run. It:
 
-- installs `git ripgrep fd-find build-essential curl unzip xclip` with apt and links `fd` → `fdfind`;
+- installs `git ripgrep fd-find build-essential curl unzip xclip inotify-tools` with apt and links `fd` → `fdfind`;
 - installs [bob](https://github.com/MordechaiHadad/bob) from a checksum-verified release, then Neovim nightly;
 - moves an existing `~/.config/neopanda` (and its data, state and cache) to `*.bak.<timestamp>`;
 - links `~/.config/neopanda` to the clone;
@@ -95,7 +95,12 @@ Useful native commands: `:Undotree`, `:DiffTool {left} {right}` (files or direct
 ## LSP
 
 Server configs are self-contained in `lsp/*.lua` and only enabled when their binary is on `PATH`:
-emmylua_ls, nixd, vtsls, basedpyright, ruff, bashls, jsonls, yamlls, taplo, marksman.
+emmylua_ls, nixd, vtsls, basedpyright, ruff, bashls, jsonls, yamlls, taplo, marksman, rust_analyzer, gopls,
+vue_ls, svelte, astro, html, cssls, tailwindcss, eslint, biome. tailwindcss, eslint and biome start only in
+projects that use them. Dart/Flutter: flutter-tools.nvim starts dartls from the Flutter SDK on `PATH`.
+Off Nix, rust-analyzer comes from `rustup component add rust-analyzer`.
+On Linux, servers learn about new files through `inotifywait`: keep WSL projects under `~` (not `/mnt/c`), and
+raise `fs.inotify.max_user_watches` with sysctl if you see "no space left on device".
 
 ## Plugins (vim.pack)
 

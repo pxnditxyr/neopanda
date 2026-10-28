@@ -35,26 +35,40 @@
         let
           neovim = neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.neovim;
           # Tools used by native features. Prefixed so the Nix versions always win.
-          tools = with pkgs; [
-            git # vim.pack
-            ripgrep # 'grepprg'
-            fd # 'findfunc'
-            tree-sitter # nvim-treesitter parser builds
-            stdenv.cc # C compiler for parsers
-            # LSP servers (lsp/*.lua)
-            emmylua-ls # Lua
-            nixd # Nix
-            nixfmt # nixd formatting
-            vtsls # TypeScript / JavaScript
-            basedpyright # Python types
-            ruff # Python lint / format
-            bash-language-server # Shell
-            shellcheck # bashls diagnostics
-            vscode-langservers-extracted # JSON
-            yaml-language-server # YAML
-            taplo # TOML
-            marksman # Markdown
-          ];
+          tools =
+            with pkgs;
+            [
+              git # vim.pack
+              ripgrep # 'grepprg'
+              fd # 'findfunc'
+              tree-sitter # nvim-treesitter parser builds
+              stdenv.cc # C compiler for parsers
+              # LSP servers (lsp/*.lua)
+              emmylua-ls # Lua
+              nixd # Nix
+              nixfmt # nixd formatting
+              vtsls # TypeScript / JavaScript
+              basedpyright # Python types
+              ruff # Python lint / format
+              bash-language-server # Shell
+              shellcheck # bashls diagnostics
+              vscode-langservers-extracted # JSON
+              yaml-language-server # YAML
+              taplo # TOML
+              marksman # Markdown
+              rust-analyzer # Rust
+              gopls # Go
+              vue-language-server # Vue (+ @vue/typescript-plugin for vtsls)
+              svelte-language-server # Svelte
+              astro-language-server # Astro
+              tailwindcss-language-server # Tailwind classes
+              biome # JS/TS/JSON lint + format (projects with biome.json)
+              # html, cssls and eslint come from vscode-langservers-extracted
+              # dartls comes from the project's Flutter SDK (flutter-tools.nvim)
+            ]
+            ++ lib.optionals stdenv.hostPlatform.isLinux [
+              inotify-tools # LSP file watching (inotifywait backend)
+            ];
           # Only exposes npd and neopanda; never shadows a system `nvim`.
           neopanda =
             pkgs.runCommand "neopanda"
@@ -67,6 +81,7 @@
                   makeWrapper ${neovim}/bin/nvim $out/bin/$name \
                     --set-default NVIM_APPNAME neopanda \
                     --set NEOPANDA_NIX 1 \
+                    --set NEOPANDA_VUE_LS ${pkgs.vue-language-server}/lib/language-tools/packages/language-server \
                     --prefix PATH : ${pkgs.lib.makeBinPath tools}
                 done
               '';

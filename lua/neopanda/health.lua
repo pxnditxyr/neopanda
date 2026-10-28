@@ -70,6 +70,12 @@ local function tools()
     { "tree-sitter", health.warn, "nvim-treesitter needs it (0.26.1+) to build parsers" },
     { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
   }
+  if env.is_linux then
+    table.insert(
+      list,
+      { "inotifywait", health.warn, "LSP servers miss new files (install inotify-tools)" }
+    )
+  end
   for _, tool in ipairs(list) do
     local bin, report, advice = unpack(tool)
     if vim.fn.executable(bin) == 1 then
@@ -95,7 +101,7 @@ local function lsp_servers()
       health.warn(
         pad(name, 14) .. "not installed · server skipped",
         env.is_nix and bin and ("put `" .. bin .. "` on PATH")
-          or "install it with :Mason if it is there (nixd is Nix only)"
+          or "install it with :Mason (not there: nixd is Nix only, rust-analyzer comes from rustup)"
       )
     end
   end

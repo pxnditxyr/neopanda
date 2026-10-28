@@ -43,6 +43,9 @@ local specs = {
   "https://github.com/windwp/nvim-ts-autotag",
   "https://github.com/Wansmer/treesj",
   "https://github.com/folke/ts-comments.nvim",
+  "https://github.com/b0o/SchemaStore.nvim",
+  "https://github.com/nvim-lua/plenary.nvim",
+  "https://github.com/nvim-flutter/flutter-tools.nvim",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/

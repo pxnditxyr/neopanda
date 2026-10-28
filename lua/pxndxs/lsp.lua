@@ -67,7 +67,12 @@ autocmd("LspAttach", {
 vim.lsp.codelens.enable(true)
 vim.lsp.on_type_formatting.enable(true)
 
-vim.lsp.config("*", { root_markers = { ".git" } })
+local config = { root_markers = { ".git" } }
+-- Neovim tells servers about created/deleted files only on macOS/Windows; vue_ls, astro and svelte need it
+if require("pxndxs.env").is_linux then
+  config.capabilities = { workspace = { didChangeWatchedFiles = { dynamicRegistration = true } } }
+end
+vim.lsp.config("*", config)
 
 -- Without Nix, servers come from Mason: its bin must be on PATH before the check below
 if not require("pxndxs.env").is_nix then
@@ -86,6 +91,16 @@ local servers = {
   "yamlls",
   "taplo",
   "marksman",
+  "rust_analyzer",
+  "gopls",
+  "vue_ls",
+  "svelte",
+  "astro",
+  "html",
+  "cssls",
+  "tailwindcss",
+  "eslint",
+  "biome",
 }
 for _, name in ipairs(servers) do
   local cmd = (vim.lsp.config[name] or {}).cmd
