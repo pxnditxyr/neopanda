@@ -63,8 +63,8 @@ autocmd("LspAttach", {
 })
 
 -- Opt-in features, active for every client that supports them
+-- Linked editing stays off: it loses the tag pair once `ciw` empties the name; nvim-ts-autotag renames tags
 vim.lsp.codelens.enable(true)
-vim.lsp.linked_editing_range.enable(true)
 vim.lsp.on_type_formatting.enable(true)
 
 vim.lsp.config("*", { root_markers = { ".git" } })
