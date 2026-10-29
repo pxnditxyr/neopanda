@@ -106,14 +106,34 @@ function M.cmp(a, b)
   return (la.sortText or la.label or a.word) < (lb.sortText or lb.label or b.word)
 end
 
--- No LSP menu with nothing typed yet: 'autocomplete' asks the servers after `(`, `,` or a space too, and
--- they answer with every symbol. Cost: <C-x><C-o> there shows nothing either (type a letter first).
+-- 'autocomplete' calls this after every typed char. Like the LSP spec (and blink.cmp, nvim-cmp, VS Code),
+-- ask the servers only after a keyword char, or after one of a server's trigger characters, telling it
+-- which one (`"` in an import → paths). Whitespace never triggers. After `)`, `=`, `"a"`… nothing, else
+-- servers answer with every symbol. Cost: <C-x><C-o> there shows nothing either (type a letter first).
 function M.omnifunc(findstart, base)
-  local before = vim.api.nvim_get_current_line():sub(1, vim.fn.col(".") - 1)
-  if findstart == 1 and before:match("[%s(,]$") then
-    return -3
+  if findstart == 0 then
+    return vim.lsp.omnifunc(findstart, base)
   end
-  return vim.lsp.omnifunc(findstart, base)
+  local before = vim.api.nvim_get_current_line():sub(1, vim.fn.col(".") - 1)
+  if vim.fn.match(before, [[\k$]]) >= 0 then
+    return vim.lsp.omnifunc(findstart, base)
+  end
+  local char = before:sub(-1)
+  if char:match("^%S$") then
+    local ids = {}
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0, method = "textDocument/completion" })) do
+      local triggers =
+        vim.tbl_get(client.server_capabilities, "completionProvider", "triggerCharacters")
+      if triggers and vim.list_contains(triggers, char) then
+        table.insert(ids, client.id)
+      end
+    end
+    if #ids > 0 then
+      vim.lsp.completion.get({ ctx = { triggerKind = 2, triggerCharacter = char }, client_id = ids })
+      return -2 -- the menu opens when the servers answer, as with vim.lsp.omnifunc
+    end
+  end
+  return -3
 end
 
 -- Snippets in the menu, toggled with <leader>uS (read by the mini.snippets server)

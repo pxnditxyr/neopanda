@@ -112,8 +112,8 @@ Saving formats through the buffer's LSP server (one per buffer: biome when the p
 
 Native: the menu opens while typing (`'autocomplete'`), also in the command line for `:`, `/` and `?`.
 `<C-y>` accepts, `<C-e>` cancels, `<C-s>` shows the signature. The signature also pops up above the cursor
-after `(` and `,` and stays while the cursor is inside the call. Server items show up once a letter is
-typed, not right after `(`, `,` or a space.
+after `(` and `,` and stays while the cursor is inside the call. Servers are asked after a letter or one
+of their trigger characters (`.`, `"` / `/` in imports…), not after `)`, `=`, `(`, `,` or a space.
 Snippets come from friendly-snippets and `snippets/` (VS Code JSON, one file per language), served by
 mini.snippets as an LSP server (framework snippets such as Angular stay off). They are ranked with the
 rest (a server item wins a tie); `<leader>uS` hides them. Jump with `<Tab>`/`<S-Tab>` or `<C-t>`/`<C-d>`.
