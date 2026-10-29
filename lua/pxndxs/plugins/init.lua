@@ -3,4 +3,5 @@ return {
   { import = "pxndxs.plugins.mason" },
   { import = "pxndxs.plugins.treesitter" },
   { import = "pxndxs.plugins.lsp" },
+  { import = "pxndxs.plugins.completion" },
 }

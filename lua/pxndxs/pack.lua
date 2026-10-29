@@ -46,6 +46,8 @@ local specs = {
   "https://github.com/b0o/SchemaStore.nvim",
   "https://github.com/nvim-lua/plenary.nvim",
   "https://github.com/nvim-flutter/flutter-tools.nvim",
+  "https://github.com/nvim-mini/mini.snippets",
+  "https://github.com/rafamadriz/friendly-snippets",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/

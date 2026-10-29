@@ -64,7 +64,7 @@ Per-machine overrides go in `lua/pxndxs/settings_local.lua` (gitignored), merged
 return {
   ui2 = true,        -- experimental message/cmdline UI
   autoformat = true, -- format on save (toggle: <leader>uf, buffer: <leader>uF)
-  nerd_font = true,  -- icons in diagnostic signs; false = plain letters
+  nerd_font = true,  -- icons in diagnostic signs and the completion menu; false = plain text
 }
 ```
 
@@ -88,7 +88,9 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>ud` / `<leader>uv` | n | Toggle diagnostics / diagnostic virtual lines |
 | `gd` / `gD` | n | LSP definition / declaration |
 | `<leader>uh` | n | Toggle inlay hints (LSP) |
+| `<leader>uS` | n | Toggle snippets in the completion menu |
 | `<leader>lr` / `<leader>li` | n | LSP restart / info (`:checkhealth vim.lsp`) |
+| `<C-t>` / `<C-d>` | i s | Snippet: next / previous field (outside a snippet: native indent / dedent) |
 
 Useful native commands: `:Undotree`, `:DiffTool {left} {right}` (files or directories), `:Cfilter`,
 `ZR` (restart keeping the session).
@@ -105,6 +107,16 @@ raise `fs.inotify.max_user_watches` with sysctl if you see "no space left on dev
 
 Saving formats through the buffer's LSP server (one per buffer: biome when the project has `biome.json`).
 `<leader>uf` toggles format on save, `<leader>uF` only for the current buffer. Markdown is not formatted.
+
+## Completion
+
+Native: the menu opens while typing (`'autocomplete'`), also in the command line for `:`, `/` and `?`.
+`<C-y>` accepts, `<C-e>` cancels, `<C-s>` shows the signature. The signature also pops up above the cursor
+after `(` and `,` and stays while the cursor is inside the call. Server items show up once a letter is
+typed, not right after `(`, `,` or a space.
+Snippets come from friendly-snippets and `snippets/` (VS Code JSON, one file per language), served by
+mini.snippets as an LSP server (framework snippets such as Angular stay off). They are ranked with the
+rest (a server item wins a tie); `<leader>uS` hides them. Jump with `<Tab>`/`<S-Tab>` or `<C-t>`/`<C-d>`.
 
 ## Plugins (vim.pack)
 

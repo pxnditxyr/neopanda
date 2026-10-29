@@ -8,6 +8,10 @@
       "rev": "8b139a870eae9520fc3e8473820b82bc1b210bcf",
       "src": "https://github.com/nvim-flutter/flutter-tools.nvim"
     },
+    "friendly-snippets": {
+      "rev": "b2ea5c41a150ba72fb656eedb4ed0a86d138d945",
+      "src": "https://github.com/rafamadriz/friendly-snippets"
+    },
     "lze": {
       "rev": "5020f28b13055a9cb3f51ab8b2cfefcd069dd3f7",
       "src": "https://github.com/BirdeeHub/lze"
@@ -15,6 +19,10 @@
     "mason.nvim": {
       "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
       "src": "https://github.com/mason-org/mason.nvim"
+    },
+    "mini.snippets": {
+      "rev": "810c9aeb976791e3c329e0f073c82dab70fed8a7",
+      "src": "https://github.com/nvim-mini/mini.snippets"
     },
     "nvim-treesitter": {
       "rev": "a2f694478be07f89c2d03cc17858a8745a400c4b",

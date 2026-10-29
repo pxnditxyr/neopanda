@@ -1,6 +1,7 @@
 -- Native LSP. Server configs live in lsp/*.lua. Defaults kept: gra grn grr gri grt grx gO K
 -- <C-S>, <C-]> (definition via tagfunc), gq (formatexpr), document colors.
 local autocmd = vim.api.nvim_create_autocmd
+local sig_ns = vim.api.nvim_create_namespace("pxndxs.lsp_signature")
 
 autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("pxndxs.lsp", {}),
@@ -25,7 +26,85 @@ autocmd("LspAttach", {
 
     -- 'autocomplete' triggers the menu; this adds snippets, auto-imports and the resolve popup
     if client:supports_method("textDocument/completion") then
-      vim.lsp.completion.enable(true, client.id, buf, { autotrigger = false })
+      vim.lsp.completion.enable(true, client.id, buf, {
+        autotrigger = false,
+        convert = require("pxndxs.completion").convert,
+        cmp = require("pxndxs.completion").cmp,
+      })
+      vim.bo[buf].omnifunc = "v:lua.require'pxndxs.completion'.omnifunc"
+    end
+
+    -- Signature help pops up above the cursor (the completion menu opens below) on the server's trigger
+    -- characters (`(`, `,`) and follows the cursor until the server has no signature (call left)
+    local sig = client.server_capabilities.signatureHelpProvider
+    if sig and sig.triggerCharacters then
+      local chars =
+        vim.list_extend(vim.list_slice(sig.triggerCharacters), sig.retriggerCharacters or {})
+      local active = false
+      -- shortcut: no stale-response check, add one if a slow server makes the window flicker
+      local function refresh()
+        local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+        client:request("textDocument/signatureHelp", params, function(_, result)
+          local lines, hl
+          if result and vim.api.nvim_get_mode().mode:sub(1, 1) == "i" then
+            lines, hl = vim.lsp.util.convert_signature_help_to_markdown_lines(
+              result,
+              vim.bo[buf].filetype,
+              sig.triggerCharacters
+            )
+          end
+          if not lines or #lines == 0 then
+            active = false
+            local win = vim.b[buf].lsp_floating_preview
+            if win and vim.api.nvim_win_is_valid(win) then
+              vim.api.nvim_win_close(win, true)
+            end
+            return
+          end
+          local fbuf = vim.lsp.util.open_floating_preview(lines, "markdown", {
+            focusable = false,
+            anchor_bias = "above",
+            close_events = { "InsertLeave", "BufLeave" },
+          })
+          if hl then
+            vim.hl.range(
+              fbuf,
+              sig_ns,
+              "LspSignatureActiveParameter",
+              { hl[1], hl[2] },
+              { hl[3], hl[4] }
+            )
+          end
+        end, buf)
+      end
+      local group =
+        vim.api.nvim_create_augroup("pxndxs.lsp_signature." .. buf .. "." .. client.id, {})
+      autocmd("InsertCharPre", {
+        group = group,
+        buf = buf,
+        callback = function()
+          if vim.list_contains(chars, vim.v.char) then
+            active = true
+            vim.schedule(refresh)
+          end
+        end,
+      })
+      autocmd({ "CursorMovedI", "TextChangedP" }, {
+        group = group,
+        buf = buf,
+        callback = function()
+          if active then
+            refresh()
+          end
+        end,
+      })
+      autocmd("InsertLeave", {
+        group = group,
+        buf = buf,
+        callback = function()
+          active = false
+        end,
+      })
     end
 
     -- LSP folding for the window showing this buffer (overrides treesitter folding)
