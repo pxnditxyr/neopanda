@@ -143,4 +143,17 @@ vim.keymap.set("n", "<leader>uS", function()
   vim.notify("Snippets in menu: " .. (M.snippets and "on" or "off"))
 end, { desc = "Toggle snippets in menu" })
 
+-- SQL buffers (plugins/lang.lua): dadbod's tables, columns and functions before its reserved words
+function M.dadbod(findstart, base)
+  local res = vim.fn["vim_dadbod_completion#omni"](findstart, base)
+  if findstart == 1 or type(res) ~= "table" then
+    return res
+  end
+  local items, reserved = {}, {}
+  for _, item in ipairs(res.words or res) do
+    table.insert(type(item) == "table" and item.kind == "R" and reserved or items, item)
+  end
+  return vim.list_extend(items, reserved)
+end
+
 return M

@@ -71,6 +71,11 @@ local function tools()
     { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
     { "lazygit", health.warn, "<leader>gg (lazygit) is unavailable" },
     { "claude", health.warn, "Claude Code CLI missing (<leader>aa); install it from claude.ai" },
+    { "hurl", health.warn, ".hurl requests (<leader>rs) can't run" },
+    { "jq", health.warn, "hurl responses show unformatted JSON" },
+    { "psql", health.warn, "dadbod can't open PostgreSQL connections" },
+    { "sqlite3", health.warn, "dadbod can't open SQLite databases" },
+    { "mysql", health.warn, "dadbod can't open MySQL/MariaDB connections" },
   }
   if env.is_linux then
     table.insert(

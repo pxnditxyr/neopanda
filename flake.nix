@@ -80,6 +80,14 @@
               # Debug adapters (plugins/debug.lua)
               vscode-js-debug # JS/TS (js-debug)
               delve # Go (dlv)
+              sqls # SQL
+              docker-language-server # Dockerfile / Compose / Bake
+              # Languages (plugins/lang.lua)
+              hurl # .hurl requests (hurl.nvim)
+              jq # hurl.nvim JSON formatting
+              postgresql # psql for dadbod
+              sqlite # sqlite3 for dadbod
+              mariadb.client # mysql for dadbod
               # html, cssls and eslint come from vscode-langservers-extracted
               # dartls comes from the project's Flutter SDK (flutter-tools.nvim)
             ]

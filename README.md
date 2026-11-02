@@ -133,6 +133,9 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>tr` / `<leader>tt` / `<leader>tT` / `<leader>tl` | n | Test: nearest / file / all / last (Rust: `cargo test` into quickfix) |
 | `<leader>td` / `<leader>tS` / `<leader>tw` | n | Test: debug nearest / stop / watch file |
 | `<leader>ts` / `<leader>to` / `<leader>tO` | n | Test: summary / output / output panel |
+| `<leader>D` | n | Database UI (dadbod) |
+| `<leader>rs` / `<leader>ra` / `<leader>rv` | n x / n / n | `.hurl`: run request under cursor (or selection) / whole file / verbose |
+| `<leader>rm` / `<leader>re` | n | `.hurl`: toggle split/popup response / pick env file |
 
 Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
 `<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
@@ -202,6 +205,16 @@ Dart/Flutter (flutter-tools; `:FlutterRun` runs under the debugger). A project's
 read automatically: its configurations show up in `<leader>dc`. neotest runs tests with ✓/✗ beside each
 one for Go, Vitest and Dart; `<leader>td` debugs the nearest one. Rust tests run `cargo test` into the
 quickfix list. Off Nix, Mason installs js-debug-adapter, delve and codelldb.
+
+## Languages
+
+Databases with vim-dadbod: `<leader>D` opens the DBUI drawer (add a connection with `A`, e.g.
+`postgres://user@localhost/db` or `sqlite:path/app.db`); in its query buffers the native completion menu lists
+the tables and columns of the connected database first, then SQL keywords. sqls only starts in projects with its `config.yml`.
+HTTP requests are `.hurl` files run by hurl.nvim: the response opens in a split on the right (`q` closes),
+JSON formatted with `jq`, variables from a `vars.env`. `Cargo.toml` gets versions, features and upgrades
+from crates.nvim through the LSP (completion, hover, `gra`); in `go.mod`, gopls' code lens checks for
+upgrades. Dockerfile, Compose and Bake files use docker-language-server.
 
 ## Sessions
 

@@ -9,4 +9,5 @@ return {
   { import = "pxndxs.plugins.git" },
   { import = "pxndxs.plugins.ai" },
   { import = "pxndxs.plugins.debug" },
+  { import = "pxndxs.plugins.lang" },
 }

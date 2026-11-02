@@ -153,6 +153,16 @@ if require("pxndxs.env").is_linux then
 end
 vim.lsp.config("*", config)
 
+-- Compose and Bake files get their own filetypes (yamlls and treesitter still treat them as yaml/hcl), so
+-- docker-language-server attaches to them and not to every YAML file
+vim.filetype.add({
+  pattern = {
+    ["docker%-compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+    ["compose[%w.-]*%.ya?ml"] = "yaml.docker-compose",
+    ["docker%-bake[%w.-]*%.hcl"] = "hcl.docker-bake",
+  },
+})
+
 -- Without Nix, servers come from Mason: its bin must be on PATH before the check below
 if not require("pxndxs.env").is_nix then
   vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
@@ -181,6 +191,8 @@ local servers = {
   "eslint",
   "biome",
   "copilot",
+  "sqls",
+  "docker_language_server",
 }
 for _, name in ipairs(servers) do
   local cmd = (vim.lsp.config[name] or {}).cmd
