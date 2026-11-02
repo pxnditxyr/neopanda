@@ -4,6 +4,10 @@
       "rev": "ecab38c6d3130e1e57bdb611421e915aaa2a4f48",
       "src": "https://github.com/b0o/SchemaStore.nvim"
     },
+    "catppuccin": {
+      "rev": "edefef779ab08ce1a4a404713e3012b0d202bd35",
+      "src": "https://github.com/catppuccin/nvim"
+    },
     "flash.nvim": {
       "rev": "5f0f270fdc7c5b0c21d903ee85b9cb06f2ac636a",
       "src": "https://github.com/folke/flash.nvim"
@@ -36,13 +40,29 @@
       "rev": "79974f485028a3212f5a3f23b0095f8d0ae6f494",
       "src": "https://github.com/nvim-mini/mini.clue"
     },
+    "mini.extra": {
+      "rev": "6cbc59d875a9768819091d0a56223205022cbe72",
+      "src": "https://github.com/nvim-mini/mini.extra"
+    },
     "mini.hipatterns": {
       "rev": "247c0173579a29af60f25f00671a75c57090be9c",
       "src": "https://github.com/nvim-mini/mini.hipatterns"
     },
+    "mini.icons": {
+      "rev": "eab3e692d796d78ea6ffc978d8a380ff26fcf4e3",
+      "src": "https://github.com/nvim-mini/mini.icons"
+    },
+    "mini.indentscope": {
+      "rev": "b26a8ee619c0f4158dd4df1a8151b236b7d100bc",
+      "src": "https://github.com/nvim-mini/mini.indentscope"
+    },
     "mini.pairs": {
       "rev": "03eb1f0062a2cee5314d1ac3939246e4bb21352e",
       "src": "https://github.com/nvim-mini/mini.pairs"
+    },
+    "mini.pick": {
+      "rev": "32ead2c8016a68487de87f23d604135843b0196d",
+      "src": "https://github.com/nvim-mini/mini.pick"
     },
     "mini.snippets": {
       "rev": "810c9aeb976791e3c329e0f073c82dab70fed8a7",
@@ -81,6 +101,10 @@
     "rainbow-delimiters.nvim": {
       "rev": "b55decda611755171bc5bf8f4c99603a75de4b41",
       "src": "https://github.com/HiPhish/rainbow-delimiters.nvim"
+    },
+    "render-markdown.nvim": {
+      "rev": "8e8795368391036643b622875a6da6a51bcd33f4",
+      "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
     },
     "treesj": {
       "rev": "9f349ba62c524f065d6f43254d731ddf8319b9bf",

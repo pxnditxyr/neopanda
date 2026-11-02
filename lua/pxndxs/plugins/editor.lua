@@ -109,6 +109,7 @@ return {
       clue.setup({
         triggers = triggers,
         clues = {
+          { mode = "n", keys = "<Leader>f", desc = "+Find" },
           { mode = "n", keys = "<Leader>l", desc = "+LSP" },
           { mode = "n", keys = "<Leader>q", desc = "+Session/quit" },
           { mode = "n", keys = "<Leader>s", desc = "+Search" },

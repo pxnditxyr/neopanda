@@ -96,6 +96,11 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `s` / `S` | n x o / n o | Flash jump / treesitter selection (`r` in operator-pending: remote) |
 | `-` / `_` | n | Parent directory (native browser) / edit it with oil (rename, create, delete) |
 | `<leader>sr` | n x | Search and replace in the project (grug-far) |
+| `<leader><leader>` / `<leader>ff` | n | Find files (mini.pick) |
+| `<leader>fr` / `<leader>fb` | n | Recent files / buffers |
+| `<leader>sg` / `<leader>sw` / `<leader>sb` | n | Grep live / word under cursor / lines in buffers |
+| `<leader>ss` / `<leader>sS` | n | LSP symbols in file / workspace |
+| `<leader>sd` / `<leader>sh` / `<leader>sk` / `<leader>sR` | n | Diagnostics / help / keymaps / resume last picker |
 | `<leader>qs` / `<leader>qS` / `<leader>ql` | n | Session: restore (cwd) / pick / last |
 | `<leader>qd` / `<leader>qq` | n | Session: don't save on exit / quit all |
 
@@ -129,6 +134,14 @@ of their trigger characters (`.`, `"` / `/` in imports…), not after `)`, `=`, 
 Snippets come from friendly-snippets and `snippets/` (VS Code JSON, one file per language), served by
 mini.snippets as an LSP server (framework snippets such as Angular stay off). They are ranked with the
 rest (a server item wins a tie); `<leader>uS` hides them. Jump with `<Tab>`/`<S-Tab>` or `<C-t>`/`<C-d>`.
+
+## UI
+
+catppuccin (mocha) with integrations detected from the installed plugins. Native, no plugin: the statusline
+(mode, git, file, LSP progress, diagnostics, position; `lua/pxndxs/statusline.lua`), breadcrumbs in the winbar
+(path › file › LSP symbols around the cursor; `lua/pxndxs/breadcrumbs.lua`), ui2 messages and LSP/treesitter
+folds (`za`, `zc`, `zo`, `zM`, `zR`). mini.icons (also for plugins asking nvim-web-devicons), mini.indentscope
+(current scope line), render-markdown in markdown, mini.pick as picker and `vim.ui.select` (`z=`, `:tselect`…).
 
 ## Sessions
 

@@ -56,6 +56,12 @@ local specs = {
   "https://github.com/nvim-mini/mini.clue",
   "https://github.com/stevearc/oil.nvim",
   "https://github.com/MagicDuck/grug-far.nvim",
+  { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
+  "https://github.com/nvim-mini/mini.icons",
+  "https://github.com/nvim-mini/mini.pick",
+  "https://github.com/nvim-mini/mini.extra",
+  "https://github.com/nvim-mini/mini.indentscope",
+  "https://github.com/MeanderingProgrammer/render-markdown.nvim",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/
