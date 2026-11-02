@@ -65,6 +65,13 @@ local specs = {
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/folke/sidekick.nvim",
   "https://github.com/coder/claudecode.nvim",
+  "https://codeberg.org/mfussenegger/nvim-dap",
+  "https://github.com/igorlfs/nvim-dap-view",
+  "https://github.com/nvim-neotest/nvim-nio",
+  "https://github.com/nvim-neotest/neotest",
+  "https://github.com/fredrikaverpil/neotest-golang",
+  "https://github.com/marilari88/neotest-vitest",
+  "https://github.com/sidlatau/neotest-dart",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/

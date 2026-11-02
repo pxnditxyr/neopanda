@@ -86,7 +86,7 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>w` / `<leader>z` | n | Write / close window |
 | `<C-h>` `<C-j>` `<C-k>` | n | Go to window left / down / up (`<C-l>` stays native: redraw, clears multicursors) |
 | `<C-Arrows>` | n | Resize window |
-| `<leader>tn` | n | New tab (`gt`/`gT` to switch) |
+| `<leader><Tab>n` | n | New tab (`gt`/`gT` to switch) |
 | `<leader>uu` | n | Toggle undotree |
 | `<leader>ud` / `<leader>uv` | n | Toggle diagnostics / diagnostic virtual lines |
 | `gd` / `gD` | n | LSP definition / declaration |
@@ -125,6 +125,14 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>cc` / `<leader>cf` / `<leader>cm` | n | Claude Code: toggle / focus / model |
 | `<leader>cs` | n / x | Claude Code: add file / send selection |
 | `<leader>cy` / `<leader>cn` | n | Claude Code: accept / reject the proposed diff (also `:w` / `:q`) |
+| `<leader>db` / `<leader>dB` | n | Toggle breakpoint / conditional breakpoint |
+| `<leader>dc` / `<leader>dC` / `<leader>dl` / `<leader>dt` | n | Debug: start or continue / run to cursor / run last / terminate |
+| `<leader>di` / `<leader>dO` / `<leader>do` | n | Step into / over / out |
+| `<leader>du` / `<leader>dr` | n | Toggle debug view / REPL |
+| `<leader>de` / `<leader>dw` | n / n x | Evaluate under cursor / add to watches |
+| `<leader>tr` / `<leader>tt` / `<leader>tT` / `<leader>tl` | n | Test: nearest / file / all / last (Rust: `cargo test` into quickfix) |
+| `<leader>td` / `<leader>tS` / `<leader>tw` | n | Test: debug nearest / stop / watch file |
+| `<leader>ts` / `<leader>to` / `<leader>tO` | n | Test: summary / output / output panel |
 
 Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
 `<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
@@ -184,6 +192,16 @@ changes in that file you are asked to save or discard them first); `claude` +
 sends them context. Secret files (`.env*`, `*.pem`, `*.key`, `id_*`, `secrets.*`, `.netrc`, `credentials*`)
 never get suggestions. Off Nix, Mason installs `copilot-language-server`; Claude Code comes from its own
 installer (`bootstrap.sh` runs it).
+
+## Debug and tests
+
+nvim-dap is the debugger client (Neovim has none built in); nvim-dap-view opens a panel with scopes,
+watches, breakpoints, threads, REPL and console when a session starts, shows variable values inline, and
+stays open after it ends so the output can be read (`<leader>du` closes it). Adapters: JS/TS (vscode-js-debug), Go (delve), Rust (lldb-dap, else codelldb) and
+Dart/Flutter (flutter-tools; `:FlutterRun` runs under the debugger). A project's `.vscode/launch.json` is
+read automatically: its configurations show up in `<leader>dc`. neotest runs tests with ✓/✗ beside each
+one for Go, Vitest and Dart; `<leader>td` debugs the nearest one. Rust tests run `cargo test` into the
+quickfix list. Off Nix, Mason installs js-debug-adapter, delve and codelldb.
 
 ## Sessions
 

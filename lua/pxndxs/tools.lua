@@ -1,5 +1,5 @@
 -- Mason packages, installed only without Nix (the Nix wrapper puts the same tools on PATH).
--- Not here: nixd (Nix only), rust-analyzer (rustup), dartls (Flutter SDK).
+-- Not here: nixd (Nix only), rust-analyzer (rustup), dartls and the Dart debugger (Flutter SDK).
 local tools = {
   "emmylua_ls",
   "basedpyright",
@@ -21,11 +21,13 @@ local tools = {
   "eslint-lsp",
   "biome",
   "copilot-language-server",
+  "js-debug-adapter",
+  "codelldb",
 }
 
--- Mason builds gopls with `go install`
+-- Mason builds gopls and delve with `go install`
 if vim.fn.executable("go") == 1 then
-  table.insert(tools, "gopls")
+  vim.list_extend(tools, { "gopls", "delve" })
 end
 
 return tools

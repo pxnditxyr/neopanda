@@ -110,6 +110,33 @@ local function lsp_servers()
   health.info(("🎯 %d/%d installed"):format(installed, #files))
 end
 
+local function debug_adapters()
+  health.start("🐞 Debug adapters")
+  local lldb = vim.fn.executable("lldb-dap") == 1
+    or vim.fn.has("mac") == 1 and vim.system({ "xcrun", "-f", "lldb-dap" }):wait().code == 0
+  for _, a in ipairs({
+    { "JS/TS", { "js-debug", "js-debug-adapter" } },
+    { "Go", { "dlv" } },
+    { "Rust", lldb and {} or { "codelldb" }, lldb and "lldb-dap" },
+    { "Dart", { "flutter", "dart" } },
+  }) do
+    local name, bins, found = a[1], a[2], a[3]
+    for _, bin in ipairs(bins) do
+      found = found or vim.fn.executable(bin) == 1 and bin
+    end
+    if found then
+      health.ok(pad(name, 8) .. found)
+    else
+      health.warn(
+        pad(name, 8) .. "no adapter",
+        name == "Dart" and "install the Flutter SDK"
+          or env.is_nix and ("put `" .. bins[1] .. "` on PATH")
+          or "install it with :Mason"
+      )
+    end
+  end
+end
+
 local function plugins()
   health.start("📦 Plugins")
   if vim.uv.fs_access(config_dir, "W") then
@@ -137,6 +164,7 @@ return {
     settings_section()
     tools()
     lsp_servers()
+    debug_adapters()
     plugins()
   end,
 }

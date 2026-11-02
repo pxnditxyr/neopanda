@@ -1,4 +1,4 @@
--- Native statusline (global, 'laststatus' 3): mode, git, file | busy, LSP progress, diagnostics, filetype,
+-- Native statusline (global, 'laststatus' 3): mode, git, file | busy, debug session, LSP progress, diagnostics, filetype,
 -- position. Colors come from the colorscheme's own groups, so any theme works.
 local M = {}
 
@@ -92,6 +92,13 @@ local function git(buf)
   return ("%%#PxStlDim#%s%s%s  "):format(glyph.branch, head, status ~= "" and " " .. status or "")
 end
 
+-- Debug session state ("Running", "Stopped at line 2"…), only while one is active (not "Closed session: N")
+local function debug()
+  local dap = package.loaded["dap"]
+  local status = dap and dap.session() and dap.status() or ""
+  return status ~= "" and "%#DiagnosticWarn#" .. status:gsub("%%", "%%%%") .. "  " or ""
+end
+
 function M.render()
   local buf = vim.api.nvim_get_current_buf()
   local mode = modes[vim.api.nvim_get_mode().mode]
@@ -114,6 +121,7 @@ function M.render()
     file(buf),
     "%#StatusLine#%=",
     vim.o.busy > 0 and "◐ " or "",
+    debug(),
     progress ~= "" and "%#PxStlDim#" .. progress .. "  " or "",
     "%#StatusLine#",
     diagnostics,

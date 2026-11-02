@@ -77,11 +77,15 @@
               astro-language-server # Astro
               tailwindcss-language-server # Tailwind classes
               biome # JS/TS/JSON lint + format (projects with biome.json)
+              # Debug adapters (plugins/debug.lua)
+              vscode-js-debug # JS/TS (js-debug)
+              delve # Go (dlv)
               # html, cssls and eslint come from vscode-langservers-extracted
               # dartls comes from the project's Flutter SDK (flutter-tools.nvim)
             ]
             ++ lib.optionals stdenv.hostPlatform.isLinux [
               inotify-tools # LSP file watching (inotifywait backend)
+              lldb # Rust debug adapter (lldb-dap); macOS uses Xcode's
             ];
           # Only exposes npd and neopanda; never shadows a system `nvim`.
           neopanda =

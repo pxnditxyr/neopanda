@@ -6,14 +6,15 @@ return {
   },
   {
     "plenary.nvim",
-    dep_of = "flutter-tools.nvim",
+    dep_of = { "flutter-tools.nvim", "neotest" }, -- neotest-golang and neotest-dart need it
   },
   {
     "flutter-tools.nvim",
     ft = "dart",
     after = function()
-      -- Starts dartls itself from the Flutter SDK on PATH
-      require("flutter-tools").setup({})
+      -- Starts dartls itself from the Flutter SDK on PATH; the debugger registers the Dart/Flutter
+      -- adapters with nvim-dap (:FlutterRun then runs under it, breakpoints work)
+      require("flutter-tools").setup({ debugger = { enabled = true } })
     end,
   },
 }

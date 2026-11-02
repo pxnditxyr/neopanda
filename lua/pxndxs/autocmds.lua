@@ -107,3 +107,24 @@ autocmd("VimResized", {
     vim.cmd("tabnext " .. tab)
   end,
 })
+
+-- Rust tests without a neotest adapter: cargo test into the quickfix list (the rust ftplugin sets
+-- :compiler cargo in Cargo projects); these override the neotest keys in Rust buffers
+autocmd("FileType", {
+  group = augroup("rust_tests"),
+  pattern = "rust",
+  desc = "cargo test keys",
+  callback = function(args)
+    local function map(lhs, cmd, desc)
+      -- :make takes | as part of its shell command, so :cwindow goes in its own <Cmd>
+      vim.keymap.set(
+        "n",
+        lhs,
+        "<Cmd>" .. cmd .. "<CR><Cmd>cwindow<CR>",
+        { buf = args.buf, desc = desc }
+      )
+    end
+    map("<leader>tt", "make! test", "cargo test (quickfix)")
+    map("<leader>tT", "make! test --workspace", "cargo test --workspace (quickfix)")
+  end,
+})

@@ -8,4 +8,5 @@ return {
   { import = "pxndxs.plugins.editor" },
   { import = "pxndxs.plugins.git" },
   { import = "pxndxs.plugins.ai" },
+  { import = "pxndxs.plugins.debug" },
 }

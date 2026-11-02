@@ -41,7 +41,7 @@ map("n", "<C-Right>", "<Cmd>vertical resize +5<CR>", { desc = "Increase width" }
 map("t", "<C-q>", [[<C-\><C-n><C-w>p]], { desc = "Leave terminal (previous window)" })
 
 -- Tabs (gt/gT to switch)
-map("n", "<leader>tn", "<Cmd>tabnew<CR>", { desc = "New tab" })
+map("n", "<leader><Tab>n", "<Cmd>tabnew<CR>", { desc = "New tab" })
 
 -- Native directory buffer of the current file (- again goes up); _ edits it with oil
 map("n", "-", "<Plug>(nvim-dir-up)", { desc = "Parent directory" })
