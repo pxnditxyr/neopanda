@@ -6,4 +6,5 @@ return {
   { import = "pxndxs.plugins.lsp" },
   { import = "pxndxs.plugins.completion" },
   { import = "pxndxs.plugins.editor" },
+  { import = "pxndxs.plugins.git" },
 }

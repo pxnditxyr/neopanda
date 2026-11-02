@@ -26,7 +26,7 @@ programs.neopanda = {
 };
 ```
 
-The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd and the LSP servers.
+The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd, lazygit and the LSP servers.
 
 ### Ubuntu / WSL2 (no Nix)
 
@@ -40,6 +40,7 @@ The script is safe to re-run. It:
 
 - installs `git ripgrep fd-find build-essential curl unzip xz-utils xclip inotify-tools` with apt and links `fd` → `fdfind`;
 - installs [bob](https://github.com/MordechaiHadad/bob) from a checksum-verified release, then Neovim nightly;
+- installs tree-sitter and lazygit from checksum-verified releases into `~/.local/bin`;
 - keeps Node 22+ if present, else installs a checksum-verified Node 26 into `~/.local` (Mason needs it);
 - moves an existing `~/.config/neopanda` (and its data, state and cache) to `*.bak.<timestamp>`;
 - links `~/.config/neopanda` to the clone;
@@ -103,6 +104,15 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>sd` / `<leader>sh` / `<leader>sk` / `<leader>sR` | n | Diagnostics / help / keymaps / resume last picker |
 | `<leader>qs` / `<leader>qS` / `<leader>ql` | n | Session: restore (cwd) / pick / last |
 | `<leader>qd` / `<leader>qq` | n | Session: don't save on exit / quit all |
+| `]h` / `[h` / `]H` / `[H` | n | Next / previous / last / first git hunk (`ih`: hunk text object) |
+| `<leader>gs` / `<leader>gr` | n x | Stage (toggle) / reset hunk or selected lines |
+| `<leader>gS` / `<leader>gR` | n | Stage / reset buffer |
+| `<leader>gp` / `<leader>gd` | n | Preview hunk inline / diff this file |
+| `<leader>gb` | n | Blame line |
+| `<leader>ub` / `<leader>uw` | n | Toggle line blame / word diff |
+| `<leader>gg` | n | lazygit (floating terminal) |
+| `<leader>gl` / `<leader>gL` / `<leader>gh` / `<leader>gc` | n | Pick commits / file commits / hunks / branches |
+| `<leader>go` | n x | Open file (line or selection) on GitHub / GitLab |
 
 Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
 `<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
@@ -138,10 +148,18 @@ rest (a server item wins a tie); `<leader>uS` hides them. Jump with `<Tab>`/`<S-
 ## UI
 
 catppuccin (mocha) with integrations detected from the installed plugins. Native, no plugin: the statusline
-(mode, git, file, LSP progress, diagnostics, position; `lua/pxndxs/statusline.lua`), breadcrumbs in the winbar
+(mode, git, file, LSP progress, diagnostics, position; `lua/pxndxs/statusline.lua`), the statuscolumn
+(diagnostic signs │ number │ git signs, so they never hide each other; `lua/pxndxs/statuscolumn.lua`), breadcrumbs in the winbar
 (path › file › LSP symbols around the cursor; `lua/pxndxs/breadcrumbs.lua`), ui2 messages and LSP/treesitter
 folds (`za`, `zc`, `zo`, `zM`, `zR`). mini.icons (also for plugins asking nvim-web-devicons), mini.indentscope
 (current scope line), render-markdown in markdown, mini.pick as picker and `vim.ui.select` (`z=`, `:tselect`…).
+
+## Git
+
+gitsigns marks changed lines on the right of the numbers and fills the statusline git slot. Hints
+(unused locals…) have no sign; they show as faded text. lazygit runs in a native floating
+terminal: `e` on a file opens it in this Neovim; review changes before committing there. `]c`/`[c` move
+between changes in diff mode (`<leader>gd`). `<leader>go` opens the `origin` remote in the browser.
 
 ## Sessions
 

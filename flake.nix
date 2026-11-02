@@ -41,6 +41,7 @@
               git # vim.pack
               ripgrep # 'grepprg'
               fd # 'findfunc'
+              lazygit # <leader>gg
               tree-sitter # nvim-treesitter parser builds
               stdenv.cc # C compiler for parsers
               # LSP servers (lsp/*.lua)

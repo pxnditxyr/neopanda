@@ -55,6 +55,12 @@ return {
         extra.pickers.lsp({ scope = "workspace_symbol" })
       end, "Symbols (workspace)")
       map("<leader>sR", pick.builtin.resume, "Resume last picker")
+      map("<leader>gl", extra.pickers.git_commits, "Commits")
+      map("<leader>gL", function()
+        extra.pickers.git_commits({ path = vim.fn.expand("%") })
+      end, "Commits (file)")
+      map("<leader>gh", extra.pickers.git_hunks, "Hunks")
+      map("<leader>gc", extra.pickers.git_branches, "Branches")
     end,
   },
   {

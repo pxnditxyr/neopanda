@@ -14,6 +14,11 @@ declare -A TS_SHA256=(
   [x64]="c7e686aec16ba17053c2e6fd87600ccb10cf8ba3d055756b17e756d538e11114"
   [arm64]="3c0d0113cae3fea36f2336c271cbdacbcdb349edb006319155652b9386803c55"
 )
+LAZYGIT_VERSION="0.66.2"
+declare -A LAZYGIT_SHA256=(
+  [x86_64]="158efc9ddfa1241fab5fb3526bb442c8dc6c4b1904d73213b9e4e93e03c52034"
+  [arm64]="79a3161eeb642f0473e23db6341f7baabd4a5933e921a9c1167c5d5c765c41a4"
+)
 # Mason installs some LSP servers through npm; apt's nodejs (18) is too old for them
 NODE_MIN_MAJOR=22
 NODE_VERSION="v26.12.1"
@@ -129,6 +134,34 @@ install_tree_sitter() {
   rm -rf "$tmp"
 }
 
+install_lazygit() {
+  if [[ -x "$BIN_DIR/lazygit" ]]; then
+    log "lazygit already installed"
+    return
+  fi
+  local arch
+  case "$(uname -m)" in
+    x86_64) arch="x86_64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      echo "unsupported architecture: $(uname -m)" >&2
+      exit 1
+      ;;
+  esac
+  local name="lazygit_${LAZYGIT_VERSION}_linux_$arch"
+  local tmp
+  tmp="$(mktemp -d)"
+  log "installing lazygit $LAZYGIT_VERSION ($arch)"
+  run curl -fsSL -o "$tmp/$name.tar.gz" "https://github.com/jesseduffield/lazygit/releases/download/v$LAZYGIT_VERSION/$name.tar.gz"
+  if ((!DRY_RUN)); then
+    echo "${LAZYGIT_SHA256[$arch]}  $tmp/$name.tar.gz" | sha256sum --check --quiet
+  fi
+  run tar -xzf "$tmp/$name.tar.gz" -C "$tmp" lazygit
+  run mkdir -p "$BIN_DIR"
+  run install -m 755 "$tmp/lazygit" "$BIN_DIR/lazygit"
+  rm -rf "$tmp"
+}
+
 # Keeps any Node >= NODE_MIN_MAJOR already installed; otherwise installs NODE_VERSION into ~/.local
 install_node() {
   local node
@@ -216,6 +249,7 @@ main() {
   link_fd
   install_bob
   install_tree_sitter
+  install_lazygit
   install_node
   install_neovim
   link_config

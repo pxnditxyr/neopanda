@@ -62,6 +62,7 @@ local specs = {
   "https://github.com/nvim-mini/mini.extra",
   "https://github.com/nvim-mini/mini.indentscope",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
+  "https://github.com/lewis6991/gitsigns.nvim",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/

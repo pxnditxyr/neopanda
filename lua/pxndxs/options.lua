@@ -4,7 +4,7 @@ vim.g.maplocalleader = " "
 -- UI
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.signcolumn = "yes"
+vim.o.signcolumn = "no" -- signs are drawn by the statuscolumn (statuscolumn.lua)
 vim.o.cursorline = true
 vim.o.cursorlineopt = "number"
 vim.o.laststatus = 3

@@ -69,6 +69,7 @@ local function tools()
     { "fd", health.warn, ":find falls back to rg --files" },
     { "tree-sitter", health.warn, "nvim-treesitter needs it (0.26.1+) to build parsers" },
     { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
+    { "lazygit", health.warn, "<leader>gg (lazygit) is unavailable" },
   }
   if env.is_linux then
     table.insert(

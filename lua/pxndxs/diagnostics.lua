@@ -5,7 +5,9 @@ local nerd_font = require("pxndxs.settings").nerd_font
 ---@type vim.diagnostic.Opts.VirtualLines
 local virtual_lines = { current_line = true }
 
+-- No HINT sign: hints (unused locals…) already show as faded text, and a sign on every line hid git marks
 local signs = {
+  severity = { min = severity.INFO },
   numhl = {
     [severity.ERROR] = "DiagnosticSignError",
     [severity.WARN] = "DiagnosticSignWarn",
@@ -16,7 +18,6 @@ if nerd_font then
   signs.text = {
     [severity.ERROR] = "\u{f057} ",
     [severity.WARN] = "\u{f071} ",
-    [severity.HINT] = "\u{f0335} ",
     [severity.INFO] = "\u{f05a} ",
   }
 end
