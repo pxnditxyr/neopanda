@@ -70,6 +70,7 @@ local function tools()
     { "tree-sitter", health.warn, "nvim-treesitter needs it (0.26.1+) to build parsers" },
     { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
     { "lazygit", health.warn, "<leader>gg (lazygit) is unavailable" },
+    { "claude", health.warn, "Claude Code CLI missing (<leader>aa); install it from claude.ai" },
   }
   if env.is_linux then
     table.insert(

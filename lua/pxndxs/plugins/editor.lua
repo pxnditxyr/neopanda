@@ -109,6 +109,8 @@ return {
       clue.setup({
         triggers = triggers,
         clues = {
+          { mode = "n", keys = "<Leader>a", desc = "+AI" },
+          { mode = "n", keys = "<Leader>c", desc = "+Claude" },
           { mode = "n", keys = "<Leader>f", desc = "+Find" },
           { mode = "n", keys = "<Leader>g", desc = "+Git" },
           { mode = "n", keys = "<Leader>l", desc = "+LSP" },

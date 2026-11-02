@@ -20,6 +20,7 @@ local tools = {
   "tailwindcss-language-server",
   "eslint-lsp",
   "biome",
+  "copilot-language-server",
 }
 
 -- Mason builds gopls with `go install`

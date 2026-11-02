@@ -7,4 +7,5 @@ return {
   { import = "pxndxs.plugins.completion" },
   { import = "pxndxs.plugins.editor" },
   { import = "pxndxs.plugins.git" },
+  { import = "pxndxs.plugins.ai" },
 }

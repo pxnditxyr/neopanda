@@ -26,7 +26,8 @@ programs.neopanda = {
 };
 ```
 
-The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd, lazygit and the LSP servers.
+The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd, lazygit and the LSP servers
+(including Copilot's, the only unfree package).
 
 ### Ubuntu / WSL2 (no Nix)
 
@@ -40,7 +41,8 @@ The script is safe to re-run. It:
 
 - installs `git ripgrep fd-find build-essential curl unzip xz-utils xclip inotify-tools` with apt and links `fd` → `fdfind`;
 - installs [bob](https://github.com/MordechaiHadad/bob) from a checksum-verified release, then Neovim nightly;
-- installs tree-sitter and lazygit from checksum-verified releases into `~/.local/bin`;
+- installs tree-sitter and lazygit from checksum-verified releases into `~/.local/bin`, and Claude Code with its
+  official installer;
 - keeps Node 22+ if present, else installs a checksum-verified Node 26 into `~/.local` (Mason needs it);
 - moves an existing `~/.config/neopanda` (and its data, state and cache) to `*.bak.<timestamp>`;
 - links `~/.config/neopanda` to the clone;
@@ -113,6 +115,16 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>gg` | n | lazygit (floating terminal) |
 | `<leader>gl` / `<leader>gL` / `<leader>gh` / `<leader>gc` | n | Pick commits / file commits / hunks / branches |
 | `<leader>go` | n x | Open file (line or selection) on GitHub / GitLab |
+| `<Tab>` | i / n | Accept AI suggestion (else next snippet field, else Tab) / jump to or apply the next edit (NES) |
+| `<M-n>` / `<M-p>` | i | Next / previous AI suggestion |
+| `<leader>ua` | n | Toggle AI suggestions |
+| `<leader>aa` / `<leader>as` | n | AI CLI (Claude Code…): toggle / pick tool |
+| `<leader>at` / `<leader>af` / `<leader>ap` | n x / n / n x | AI CLI: send this (line or selection) / file / a prompt |
+| `<C-.>` | n x i t | AI CLI: focus |
+| `<C-q>` | t | Leave a terminal (Claude, lazygit, `:terminal`) back to the previous window |
+| `<leader>cc` / `<leader>cf` / `<leader>cm` | n | Claude Code: toggle / focus / model |
+| `<leader>cs` | n / x | Claude Code: add file / send selection |
+| `<leader>cy` / `<leader>cn` | n | Claude Code: accept / reject the proposed diff (also `:w` / `:q`) |
 
 Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
 `<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
@@ -160,6 +172,18 @@ gitsigns marks changed lines on the right of the numbers and fills the statuslin
 (unused locals…) have no sign; they show as faded text. lazygit runs in a native floating
 terminal: `e` on a file opens it in this Neovim; review changes before committing there. `]c`/`[c` move
 between changes in diff mode (`<leader>gd`). `<leader>go` opens the `origin` remote in the browser.
+
+## AI
+
+Suggestions as ghost text from Copilot through the native LSP client (`lsp/copilot.lua`,
+`vim.lsp.inline_completion`): sign in once with `:LspCopilotSignIn`. Copilot's next edit suggestions (NES) show after you leave Insert mode; `<Tab>`
+jumps to them and applies them. claudecode.nvim connects Claude Code like its VS Code
+extension: Claude sees your selection and its edits open as diffs (`:w` accepts, `:q` rejects; with unsaved
+changes in that file you are asked to save or discard them first); `claude` +
+`/ide` in any other terminal of the project connects too. sidekick runs other AI CLIs (opencode, codex…) and
+sends them context. Secret files (`.env*`, `*.pem`, `*.key`, `id_*`, `secrets.*`, `.netrc`, `credentials*`)
+never get suggestions. Off Nix, Mason installs `copilot-language-server`; Claude Code comes from its own
+installer (`bootstrap.sh` runs it).
 
 ## Sessions
 

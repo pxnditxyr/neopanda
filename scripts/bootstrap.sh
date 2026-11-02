@@ -162,6 +162,16 @@ install_lazygit() {
   rm -rf "$tmp"
 }
 
+# Official installer (it verifies the binary's checksum itself); keeps its own auto-update
+install_claude() {
+  if PATH="$BIN_DIR:$PATH" command -v claude >/dev/null; then
+    log "claude already installed"
+    return
+  fi
+  log "installing Claude Code"
+  run bash -c 'curl -fsSL https://claude.ai/install.sh | bash'
+}
+
 # Keeps any Node >= NODE_MIN_MAJOR already installed; otherwise installs NODE_VERSION into ~/.local
 install_node() {
   local node
@@ -250,6 +260,7 @@ main() {
   install_bob
   install_tree_sitter
   install_lazygit
+  install_claude
   install_node
   install_neovim
   link_config

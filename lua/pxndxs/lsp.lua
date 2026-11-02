@@ -180,6 +180,7 @@ local servers = {
   "tailwindcss",
   "eslint",
   "biome",
+  "copilot",
 }
 for _, name in ipairs(servers) do
   local cmd = (vim.lsp.config[name] or {}).cmd

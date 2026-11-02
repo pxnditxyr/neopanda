@@ -27,7 +27,18 @@
         "x86_64-linux"
         "aarch64-linux"
       ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs systems (
+          system:
+          f (
+            import nixpkgs {
+              inherit system;
+              # Copilot's language server is unfree; nothing else is
+              config.allowUnfreePredicate = pkg: nixpkgs.lib.getName pkg == "copilot-language-server";
+            }
+          )
+        );
     in
     {
       packages = forAllSystems (
@@ -42,6 +53,7 @@
               ripgrep # 'grepprg'
               fd # 'findfunc'
               lazygit # <leader>gg
+              copilot-language-server # lsp/copilot.lua (AI suggestions)
               tree-sitter # nvim-treesitter parser builds
               stdenv.cc # C compiler for parsers
               # LSP servers (lsp/*.lua)

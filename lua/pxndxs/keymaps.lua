@@ -37,6 +37,8 @@ map("n", "<C-Up>", "<Cmd>resize +5<CR>", { desc = "Increase height" })
 map("n", "<C-Down>", "<Cmd>resize -5<CR>", { desc = "Decrease height" })
 map("n", "<C-Left>", "<Cmd>vertical resize -5<CR>", { desc = "Decrease width" })
 map("n", "<C-Right>", "<Cmd>vertical resize +5<CR>", { desc = "Increase width" })
+-- Terminals (Claude, :terminal…) get every other key, <Esc> included; one key leaves back to the code
+map("t", "<C-q>", [[<C-\><C-n><C-w>p]], { desc = "Leave terminal (previous window)" })
 
 -- Tabs (gt/gT to switch)
 map("n", "<leader>tn", "<Cmd>tabnew<CR>", { desc = "New tab" })
