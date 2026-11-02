@@ -4,4 +4,5 @@ return {
   { import = "pxndxs.plugins.treesitter" },
   { import = "pxndxs.plugins.lsp" },
   { import = "pxndxs.plugins.completion" },
+  { import = "pxndxs.plugins.editor" },
 }

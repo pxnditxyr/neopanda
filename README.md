@@ -81,7 +81,7 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<` / `>` | x | Indent and keep the selection |
 | `<A-j>` / `<A-k>` | n x | Move line / selection down / up |
 | `<leader>w` / `<leader>z` | n | Write / close window |
-| `<C-h>` `<C-j>` `<C-k>` | n | Go to window left / down / up (`<C-l>` stays native) |
+| `<C-h>` `<C-j>` `<C-k>` | n | Go to window left / down / up (`<C-l>` stays native: redraw, clears multicursors) |
 | `<C-Arrows>` | n | Resize window |
 | `<leader>tn` | n | New tab (`gt`/`gT` to switch) |
 | `<leader>uu` | n | Toggle undotree |
@@ -91,6 +91,16 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `<leader>uS` | n | Toggle snippets in the completion menu |
 | `<leader>lr` / `<leader>li` | n | LSP restart / info (`:checkhealth vim.lsp`) |
 | `<C-t>` / `<C-d>` | i s | Snippet: next / previous field (outside a snippet: native indent / dedent) |
+| `ys{motion}{char}` / `yss` / `S` | n / n / x | Surround: add (motion / line / selection) |
+| `ds{char}` / `cs{old}{new}` | n | Surround: delete / replace |
+| `s` / `S` | n x o / n o | Flash jump / treesitter selection (`r` in operator-pending: remote) |
+| `-` / `_` | n | Parent directory (native browser) / edit it with oil (rename, create, delete) |
+| `<leader>sr` | n x | Search and replace in the project (grug-far) |
+
+Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
+`<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
+the next match; `af`/`ac`/`aa` (function, class, argument) come from treesitter; visual `an`/`in` stay native.
+`TODO` `FIXME` `HACK` `NOTE` and `#rrggbb` are highlighted (LSP colors in CSS/Tailwind are native).
 
 Useful native commands: `:Undotree`, `:DiffTool {left} {right}` (files or directories), `:Cfilter`,
 `ZR` (restart keeping the session).

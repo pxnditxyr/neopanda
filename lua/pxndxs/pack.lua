@@ -48,6 +48,14 @@ local specs = {
   "https://github.com/nvim-flutter/flutter-tools.nvim",
   "https://github.com/nvim-mini/mini.snippets",
   "https://github.com/rafamadriz/friendly-snippets",
+  "https://github.com/nvim-mini/mini.pairs",
+  "https://github.com/nvim-mini/mini.surround",
+  "https://github.com/nvim-mini/mini.ai",
+  "https://github.com/nvim-mini/mini.hipatterns",
+  "https://github.com/folke/flash.nvim",
+  "https://github.com/nvim-mini/mini.clue",
+  "https://github.com/stevearc/oil.nvim",
+  "https://github.com/MagicDuck/grug-far.nvim",
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/
