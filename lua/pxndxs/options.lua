@@ -38,7 +38,7 @@ vim.o.findfunc = "v:lua.require'pxndxs.find'.find"
 -- Files / undo / session
 vim.o.undofile = true
 vim.o.undolevels = 10000
-vim.o.sessionoptions = "buffers,curdir,help,tabpages,winsize,terminal"
+vim.o.sessionoptions = "buffers,curdir,tabpages,winsize" -- no help/terminal: they restore empty
 
 -- Folds (foldmethod/foldexpr are set per filetype with treesitter)
 vim.o.foldlevelstart = 99

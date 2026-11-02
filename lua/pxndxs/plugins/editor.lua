@@ -110,6 +110,7 @@ return {
         triggers = triggers,
         clues = {
           { mode = "n", keys = "<Leader>l", desc = "+LSP" },
+          { mode = "n", keys = "<Leader>q", desc = "+Session/quit" },
           { mode = "n", keys = "<Leader>s", desc = "+Search" },
           { mode = "n", keys = "<Leader>t", desc = "+Tabs" },
           { mode = "n", keys = "<Leader>u", desc = "+Toggles" },

@@ -96,6 +96,8 @@ Leader is `<Space>`. Only maps that nightly doesn't already provide (`gr*`, `]d`
 | `s` / `S` | n x o / n o | Flash jump / treesitter selection (`r` in operator-pending: remote) |
 | `-` / `_` | n | Parent directory (native browser) / edit it with oil (rename, create, delete) |
 | `<leader>sr` | n x | Search and replace in the project (grug-far) |
+| `<leader>qs` / `<leader>qS` / `<leader>ql` | n | Session: restore (cwd) / pick / last |
+| `<leader>qd` / `<leader>qq` | n | Session: don't save on exit / quit all |
 
 Native multicursor (0.13): `Q` adds/removes a cursor, `zq{motion}` one at every target (`zqgn` = every match),
 `<C-l>` clears, `gQ` restores. mini.ai adds `a`/`i` objects for brackets, quotes, tags and `?` that also reach
@@ -127,6 +129,13 @@ of their trigger characters (`.`, `"` / `/` in imports…), not after `)`, `=`, 
 Snippets come from friendly-snippets and `snippets/` (VS Code JSON, one file per language), served by
 mini.snippets as an LSP server (framework snippets such as Angular stay off). They are ranked with the
 rest (a server item wins a tie); `<leader>uS` hides them. Jump with `<Tab>`/`<S-Tab>` or `<C-t>`/`<C-d>`.
+
+## Sessions
+
+Native (`:mksession`), no plugin. Quitting saves the session of the cwd (one per git branch other than
+main/master) in `stdpath("state")/sessions/`; starting `npd` with no file restores it. `npd file`, stdin and
+`ZR` (`:restart`, which keeps its own session) neither restore nor save one. Special windows (help,
+terminal, oil, grug-far) are left out, and nothing is saved when no file is open.
 
 ## Plugins (vim.pack)
 
