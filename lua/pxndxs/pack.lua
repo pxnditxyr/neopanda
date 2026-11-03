@@ -58,6 +58,7 @@ local specs = {
   "https://github.com/MagicDuck/grug-far.nvim",
   { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
   "https://github.com/nvim-mini/mini.icons",
+  "https://github.com/nvim-mini/mini.starter",
   "https://github.com/nvim-mini/mini.pick",
   "https://github.com/nvim-mini/mini.extra",
   "https://github.com/nvim-mini/mini.indentscope",

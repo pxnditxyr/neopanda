@@ -1,4 +1,5 @@
 -- neopanda 🐼
+vim.g.pxndxs_start = vim.uv.hrtime() -- start screen footer
 vim.loader.enable()
 
 require("pxndxs.options")

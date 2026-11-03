@@ -84,6 +84,10 @@
       "rev": "810c9aeb976791e3c329e0f073c82dab70fed8a7",
       "src": "https://github.com/nvim-mini/mini.snippets"
     },
+    "mini.starter": {
+      "rev": "aa5c1eacdac80b09786d5be4e58e2b28c5ebb646",
+      "src": "https://github.com/nvim-mini/mini.starter"
+    },
     "mini.surround": {
       "rev": "5357f00aca51a3b43e7775901b1ad9699f8c2678",
       "src": "https://github.com/nvim-mini/mini.surround"

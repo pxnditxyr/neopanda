@@ -20,6 +20,93 @@ return {
     end,
   },
   {
+    -- Start screen with no file and no restored session (the session restore runs first, on VimEnter).
+    -- Not lazy: its autoopen is a VimEnter autocmd. Type an item's first letter to run it.
+    "mini.starter",
+    lazy = false,
+    after = function()
+      local starter = require("mini.starter")
+      local dashboard = require("pxndxs.dashboard")
+      -- The picker loads on DeferredUIEnter; load it now if a key comes first
+      local function pick(fn)
+        return function()
+          require("lze").trigger_load("mini.pick")
+          fn()
+        end
+      end
+      local items = {
+        { "Find file", pick(function()
+          MiniPick.builtin.files()
+        end) },
+        { "New file", "enew | startinsert" },
+        { "Grep text", pick(function()
+          MiniPick.builtin.grep_live()
+        end) },
+        { "Recent files", pick(function()
+          MiniExtra.pickers.oldfiles()
+        end) },
+        {
+          "Config",
+          pick(function()
+            MiniPick.builtin.files(nil, { source = { cwd = vim.fn.stdpath("config") } })
+          end),
+        },
+        { "Session restore", require("pxndxs.session").load },
+        { "Update plugins", "packupdate" },
+        { "Quit", "qall" },
+      }
+      -- From the first line of init.lua to the first draw; frozen (the footer is redrawn on resize)
+      local started
+      starter.setup({
+        evaluate_single = true,
+        silent = true, -- no "Query:" echo; one letter runs the item
+        header = dashboard.header,
+        items = vim.tbl_map(function(i)
+          return { name = i[1], action = i[2], section = "" }
+        end, items),
+        footer = function()
+          started = started or (vim.uv.hrtime() - vim.g.pxndxs_start) / 1e6
+          local v = vim.version()
+          local footer = ("⚡ %d ms · %d plugins · NVIM v%d.%d.%d"):format(
+            started,
+            #vim.pack.get(nil, { info = false }),
+            v.major,
+            v.minor,
+            v.patch
+          )
+          return dashboard.pad(footer) .. footer
+        end,
+        content_hooks = {
+          -- Items centered under the art, like the footer
+          starter.gen_hook.adding_bullet(dashboard.pad("░ Session restore") .. "░ ", false),
+          starter.gen_hook.aligning("center", "center"),
+        },
+      })
+      local group = vim.api.nvim_create_augroup("pxndxs.starter", {})
+      -- scrolloff + scrolloffpad would scroll the art away near the last item; setlocal: only this buffer
+      vim.api.nvim_create_autocmd("User", {
+        group = group,
+        pattern = "MiniStarterOpened",
+        callback = function()
+          vim.wo[0][0].scrolloff = 0
+        end,
+      })
+      -- After starter re-centers on resize, scroll back to the top (the view keeps the old cursor line)
+      vim.api.nvim_create_autocmd("VimResized", {
+        group = group,
+        callback = vim.schedule_wrap(function()
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "ministarter" then
+              vim.api.nvim_win_call(win, function()
+                vim.fn.winrestview({ topline = 1 })
+              end)
+            end
+          end
+        end),
+      })
+    end,
+  },
+  {
     "mini.extra",
     dep_of = "mini.pick",
   },

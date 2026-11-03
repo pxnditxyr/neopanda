@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
   "runtime.version": "LuaJIT",
-  "diagnostics.globals": ["vim"],
+  "diagnostics.globals": ["vim", "MiniIcons", "MiniPick", "MiniExtra", "MiniSurround"],
   "workspace.checkThirdParty": false,
   "workspace.library": ["$VIMRUNTIME/lua", "${3rd}/luv/library", "~/.local/share/neopanda/site/pack/core/opt"]
 }
