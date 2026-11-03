@@ -76,7 +76,13 @@ local function tools()
     { "psql", health.warn, "dadbod can't open PostgreSQL connections" },
     { "sqlite3", health.warn, "dadbod can't open SQLite databases" },
     { "mysql", health.warn, "dadbod can't open MySQL/MariaDB connections" },
+    { "shellcheck", health.warn, "bashls shows no lint diagnostics" },
+    { "shfmt", health.warn, "bashls can't format shell scripts" },
   }
+  -- nixd (and its formatter) only exist with Nix
+  if env.is_nix then
+    table.insert(list, { "nixfmt", health.warn, "nixd can't format Nix files" })
+  end
   if env.is_linux then
     table.insert(
       list,
