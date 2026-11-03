@@ -38,6 +38,13 @@ return {
         { "Find file", pick(function()
           MiniPick.builtin.files()
         end) },
+        {
+          "Explorer",
+          function()
+            require("lze").trigger_load("oil.nvim")
+            require("oil").open(vim.fn.getcwd()) -- without a dir, from the starter it opens the native directory buffer
+          end,
+        },
         { "New file", "enew | startinsert" },
         { "Grep text", pick(function()
           MiniPick.builtin.grep_live()

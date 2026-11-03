@@ -2,31 +2,31 @@
 -- position. Colors come from the colorscheme's own groups, so any theme works.
 local M = {}
 
--- Nerd Font glyphs: rounded pill edges, git branch, lock
+-- Nerd Font glyphs: rounded pill edges, git branch
 local nf = require("pxndxs.settings").nerd_font
 local glyph = {
   left = nf and "\u{e0b6}" or "",
   right = nf and "\u{e0b4}" or "",
   branch = nf and "\u{e0a0} " or "",
-  lock = nf and " \u{f023}" or " [RO]",
 }
 
+-- Name, color group, emoji (from neocats)
 local modes = {
-  n = { "NORMAL", "Function" },
-  no = { "O-PENDING", "Function" },
-  i = { "INSERT", "String" },
-  ic = { "INSERT", "String" },
-  ix = { "INSERT", "String" },
-  v = { "VISUAL", "Statement" },
-  V = { "V-LINE", "Statement" },
-  ["\22"] = { "V-BLOCK", "Statement" },
-  s = { "SELECT", "Statement" },
-  S = { "S-LINE", "Statement" },
-  ["\19"] = { "S-BLOCK", "Statement" },
-  R = { "REPLACE", "DiagnosticError" },
-  c = { "COMMAND", "Constant" },
-  t = { "TERMINAL", "DiagnosticOk" },
-  nt = { "N-TERM", "Function" },
+  n = { "NORMAL", "Function", "🐈" },
+  no = { "O-PENDING", "Function", "🐾" },
+  i = { "INSERT", "String", "🐼" },
+  ic = { "INSERT", "String", "🐼" },
+  ix = { "INSERT", "String", "🐼" },
+  v = { "VISUAL", "Statement", "🐱" },
+  V = { "V-LINE", "Statement", "🐯" },
+  ["\22"] = { "V-BLOCK", "Statement", "🦢" },
+  s = { "SELECT", "Statement", "🦋" },
+  S = { "S-LINE", "Statement", "🦊" },
+  ["\19"] = { "S-BLOCK", "Statement", "🐢" },
+  R = { "REPLACE", "DiagnosticError", "🐳" },
+  c = { "COMMAND", "Constant", "🦝" },
+  t = { "TERMINAL", "DiagnosticOk", "🐚" },
+  nt = { "N-TERM", "Function", "🐙" },
 }
 
 local function color(name, attr)
@@ -51,7 +51,6 @@ local function set_highlights()
   end
   vim.api.nvim_set_hl(0, "PxStlDim", { fg = color("Comment", "fg"), bg = bg })
   vim.api.nvim_set_hl(0, "PxStlFile", { fg = color("Normal", "fg"), bg = bg, bold = true })
-  vim.api.nvim_set_hl(0, "PxStlModified", { fg = color("DiagnosticWarn", "fg"), bg = bg })
 end
 
 local function icon(buf)
@@ -67,13 +66,14 @@ local function file(buf)
   if vim.bo[buf].buftype == "terminal" then
     return "%#PxStlFile#terminal"
   elseif name == "" then
-    return "%#PxStlDim#[No Name]"
+    return "%#PxStlDim#😶 [No Name]"
   end
   local path = vim.fn.fnamemodify(name, ":~:.")
   local dir, tail = vim.fn.fnamemodify(path, ":h"), vim.fn.fnamemodify(path, ":t")
   dir = dir == "." and "" or dir .. "/"
-  local flags = (vim.bo[buf].modified and " %#PxStlModified#●" or "")
-    .. ((vim.bo[buf].readonly or not vim.bo[buf].modifiable) and "%#PxStlDim#" .. glyph.lock or "")
+  local flags = (vim.bo[buf].modified and " 📝" or "")
+    .. ((vim.bo[buf].readonly or not vim.bo[buf].modifiable) and " 🔒" or "")
+    .. (vim.bo[buf].buftype == "" and not vim.uv.fs_stat(name) and " 🌚" or "") -- not on disk yet
   return icon(buf)
     .. "%#PxStlDim#"
     .. dir:gsub("%%", "%%%%")
@@ -111,6 +111,8 @@ function M.render()
   return table.concat({
     pill,
     " ",
+    mode[3],
+    " ",
     mode[1],
     " ",
     edge,
@@ -119,6 +121,7 @@ function M.render()
     git(buf),
     "%<",
     file(buf),
+    "%#PxStlDim#  🐼 pxndxs 😼",
     "%#StatusLine#%=",
     (vim.o.busy or 0) > 0 and "◐ " or "",
     debug(),
