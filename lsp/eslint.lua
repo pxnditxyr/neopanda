@@ -43,7 +43,7 @@ return {
     useESLintClass = false,
     experimental = {},
     codeActionOnSave = { enable = false, mode = "all" },
-    format = true,
+    format = false, -- vtsls or biome format (format.lua); eslint fixes through code actions
     quiet = false,
     onIgnoredFiles = "off",
     rulesCustomizations = {},

@@ -39,6 +39,9 @@ APT_PACKAGES=(git ripgrep fd-find build-essential curl unzip xz-utils xclip inot
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/neopanda"
 BIN_DIR="$HOME/.local/bin"
+# Downloads; removed on exit, also when a step fails
+WORK_DIR="$(mktemp -d)"
+trap 'rm -rf "$WORK_DIR"' EXIT
 BOB_BIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/bob/nvim-bin"
 DRY_RUN=0
 
@@ -101,7 +104,7 @@ install_bob() {
   esac
   local name="bob-linux-$arch"
   local tmp
-  tmp="$(mktemp -d)"
+  tmp="$(mktemp -d -p "$WORK_DIR")"
   log "installing bob $BOB_VERSION ($arch)"
   run curl -fsSL -o "$tmp/$name.zip" "https://github.com/MordechaiHadad/bob/releases/download/$BOB_VERSION/$name.zip"
   if ((!DRY_RUN)); then
@@ -110,7 +113,6 @@ install_bob() {
   run unzip -q "$tmp/$name.zip" -d "$tmp"
   run mkdir -p "$BIN_DIR"
   run install -m 755 "$tmp/$name/bob" "$BIN_DIR/bob"
-  rm -rf "$tmp"
 }
 
 install_tree_sitter() {
@@ -129,7 +131,7 @@ install_tree_sitter() {
   esac
   local name="tree-sitter-cli-linux-$arch"
   local tmp
-  tmp="$(mktemp -d)"
+  tmp="$(mktemp -d -p "$WORK_DIR")"
   log "installing tree-sitter $TS_VERSION ($arch)"
   run curl -fsSL -o "$tmp/$name.zip" "https://github.com/tree-sitter/tree-sitter/releases/download/$TS_VERSION/$name.zip"
   if ((!DRY_RUN)); then
@@ -138,7 +140,6 @@ install_tree_sitter() {
   run unzip -q "$tmp/$name.zip" -d "$tmp"
   run mkdir -p "$BIN_DIR"
   run install -m 755 "$tmp/tree-sitter" "$BIN_DIR/tree-sitter"
-  rm -rf "$tmp"
 }
 
 install_lazygit() {
@@ -157,7 +158,7 @@ install_lazygit() {
   esac
   local name="lazygit_${LAZYGIT_VERSION}_linux_$arch"
   local tmp
-  tmp="$(mktemp -d)"
+  tmp="$(mktemp -d -p "$WORK_DIR")"
   log "installing lazygit $LAZYGIT_VERSION ($arch)"
   run curl -fsSL -o "$tmp/$name.tar.gz" "https://github.com/jesseduffield/lazygit/releases/download/v$LAZYGIT_VERSION/$name.tar.gz"
   if ((!DRY_RUN)); then
@@ -166,7 +167,6 @@ install_lazygit() {
   run tar -xzf "$tmp/$name.tar.gz" -C "$tmp" lazygit
   run mkdir -p "$BIN_DIR"
   run install -m 755 "$tmp/lazygit" "$BIN_DIR/lazygit"
-  rm -rf "$tmp"
 }
 
 # Not in apt (24.04) nor Mason; links libcurl (curl) and libxml2 from apt
@@ -186,7 +186,7 @@ install_hurl() {
   esac
   local name="hurl-${HURL_VERSION}-${arch}-unknown-linux-gnu"
   local tmp
-  tmp="$(mktemp -d)"
+  tmp="$(mktemp -d -p "$WORK_DIR")"
   log "installing hurl $HURL_VERSION ($arch)"
   run curl -fsSL -o "$tmp/$name.tar.gz" "https://github.com/Orange-OpenSource/hurl/releases/download/$HURL_VERSION/$name.tar.gz"
   if ((!DRY_RUN)); then
@@ -195,7 +195,6 @@ install_hurl() {
   run tar -xzf "$tmp/$name.tar.gz" -C "$tmp" "$name/bin/hurl"
   run mkdir -p "$BIN_DIR"
   run install -m 755 "$tmp/$name/bin/hurl" "$BIN_DIR/hurl"
-  rm -rf "$tmp"
 }
 
 # Official installer (it verifies the binary's checksum itself); keeps its own auto-update
@@ -212,7 +211,7 @@ install_claude() {
 install_node() {
   local node
   node="$(PATH="$BIN_DIR:$PATH" command -v node || true)"
-  if [[ -n "$node" ]] && (($("$node" -p 'process.versions.node.split(".")[0]') >= NODE_MIN_MAJOR)); then
+  if [[ -n "$node" ]] && (($("$node" -p 'process.versions.node.split(".")[0]' || echo 0) >= NODE_MIN_MAJOR)); then
     log "node $("$node" --version) already installed"
     return
   fi
@@ -227,7 +226,7 @@ install_node() {
   esac
   local name="node-$NODE_VERSION-linux-$arch.tar.xz"
   local tmp
-  tmp="$(mktemp -d)"
+  tmp="$(mktemp -d -p "$WORK_DIR")"
   log "installing Node $NODE_VERSION ($arch) into $HOME/.local"
   run curl -fsSL -o "$tmp/$name" "https://nodejs.org/dist/$NODE_VERSION/$name"
   if ((!DRY_RUN)); then
@@ -235,7 +234,6 @@ install_node() {
   fi
   run mkdir -p "$HOME/.local"
   run tar -xJf "$tmp/$name" -C "$HOME/.local" --strip-components=1 --exclude='*/README.md' --exclude='*/LICENSE' --exclude='*/CHANGELOG.md'
-  rm -rf "$tmp"
 }
 
 install_neovim() {

@@ -168,32 +168,10 @@ if not require("pxndxs.env").is_nix then
   vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
 end
 
--- Enable only the servers whose binary is installed
-local servers = {
-  "emmylua_ls",
-  "nixd",
-  "vtsls",
-  "basedpyright",
-  "ruff",
-  "bashls",
-  "jsonls",
-  "yamlls",
-  "taplo",
-  "marksman",
-  "rust_analyzer",
-  "gopls",
-  "vue_ls",
-  "svelte",
-  "astro",
-  "html",
-  "cssls",
-  "tailwindcss",
-  "eslint",
-  "biome",
-  "copilot",
-  "sqls",
-  "docker_language_server",
-}
+-- Enable every server in our lsp/ dir (not plugins' lsp/ files) whose binary is installed
+local servers = vim.tbl_map(function(file)
+  return vim.fn.fnamemodify(file, ":t:r")
+end, vim.fn.globpath(vim.fn.stdpath("config"), "lsp/*.lua", false, true))
 for _, name in ipairs(servers) do
   local cmd = (vim.lsp.config[name] or {}).cmd
   if type(cmd) == "table" and vim.fn.executable(cmd[1]) == 1 then

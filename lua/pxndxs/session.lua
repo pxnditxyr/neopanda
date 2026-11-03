@@ -91,7 +91,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     -- Opened with files or stdin: not a project session, neither restored nor saved
     if vim.fn.argc(-1) > 0 or from_stdin then
       save_on_exit = false
-    elseif vim.v.startreason == "normal" then -- :restart restores its own session
+    elseif (vim.v.startreason or "normal") == "normal" then -- :restart restores its own session (0.13+)
       M.load()
     end
   end,

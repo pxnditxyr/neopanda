@@ -56,6 +56,7 @@ return {
       -- shortcut: wraps the internal open_diff_blocking, recheck it when claudecode.nvim updates
       local diff = require("claudecode.diff")
       local open_diff = diff.open_diff_blocking
+      ---@diagnostic disable-next-line: duplicate-set-field
       diff.open_diff_blocking = function(old_path, ...)
         local path = vim.fs.normalize(old_path)
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do

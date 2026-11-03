@@ -91,7 +91,7 @@ function M.browse()
   local cwd = vim.fs.dirname(file)
   local remote = file ~= "" and git(cwd, "remote", "get-url", "origin")
   local path = remote and git(cwd, "ls-files", "--full-name", "--", file)
-  if not path or path == "" then
+  if not remote or not path or path == "" then
     return vim.notify("Not a tracked file with an origin remote", vim.log.levels.WARN)
   end
   local url = remote
@@ -103,6 +103,7 @@ function M.browse()
   if ref == "HEAD" then
     ref = git(cwd, "rev-parse", "HEAD") -- detached
   end
+  ref = ref or "HEAD" -- no commits yet
   local first, last = vim.fn.line("v"), vim.fn.line(".")
   first, last = math.min(first, last), math.max(first, last)
   local gitlab = url:find("gitlab") ~= nil

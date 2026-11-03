@@ -19,17 +19,20 @@ skip() { printf '⏭️  %s\n' "$*"; }
 result="$(mktemp)"
 trap 'rm -f "$result"' EXIT
 
-# Collects startup errors and every ERROR line of the health report
-"$NVIM" --headless -c "lua (function()
+# Collects startup errors, errors of the plugins loaded after the UI (lze's DeferredUIEnter, which never fires
+# headless) and every ERROR line of the health report. Runs in an empty dir: no session is restored or saved.
+(cd "$(mktemp -d)" && "$NVIM" --headless -c "lua (function()
   local out = {}
   if vim.v.errmsg ~= '' then table.insert(out, 'startup: ' .. vim.v.errmsg) end
+  local ok, err = pcall(vim.api.nvim_exec_autocmds, 'User', { pattern = 'DeferredUIEnter' })
+  if not ok then table.insert(out, 'DeferredUIEnter: ' .. err) end
   vim.cmd('checkhealth neopanda vim.pack')
   for _, line in ipairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
     if line:find('ERROR') then table.insert(out, line) end
   end
   vim.fn.writefile(out, '$result')
   vim.cmd('qa!')
-end)()" >/dev/null 2>&1 || fail "nvim exited with an error"
+end)()" >/dev/null 2>&1) || fail "nvim exited with an error"
 
 if [[ -s "$result" ]]; then
   fail "config / health:"
@@ -38,10 +41,11 @@ else
   pass "config loads, health has no ERROR"
 fi
 
+syntax_ok=1
 for script in "$REPO_DIR"/scripts/*.sh; do
-  bash -n "$script" || fail "bash -n ${script#"$REPO_DIR"/}"
+  bash -n "$script" || { fail "bash -n ${script#"$REPO_DIR"/}"; syntax_ok=0; }
 done
-pass "bash -n scripts"
+((syntax_ok)) && pass "bash -n scripts"
 
 if command -v shellcheck >/dev/null; then
   if shellcheck "$REPO_DIR"/scripts/*.sh; then pass "shellcheck"; else fail "shellcheck"; fi

@@ -67,9 +67,12 @@ return {
         footer = function()
           started = started or (vim.uv.hrtime() - vim.g.pxndxs_start) / 1e6
           local v = vim.version()
-          local footer = ("⚡ %d ms · %d plugins · NVIM v%d.%d.%d"):format(
+          local branch = dashboard.branch()
+          local glyph = require("pxndxs.settings").nerd_font and "\u{e0a0} " or ""
+          local footer = ("⚡ %d ms · %d plugins%s · NVIM v%d.%d.%d"):format(
             started,
             #vim.pack.get(nil, { info = false }),
+            branch and " · " .. glyph .. branch or "",
             v.major,
             v.minor,
             v.patch
@@ -77,6 +80,7 @@ return {
           return dashboard.pad(footer) .. footer
         end,
         content_hooks = {
+          dashboard.gradient,
           -- Items centered under the art, like the footer
           starter.gen_hook.adding_bullet(dashboard.pad("░ Session restore") .. "░ ", false),
           starter.gen_hook.aligning("center", "center"),

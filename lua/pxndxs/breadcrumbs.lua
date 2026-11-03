@@ -129,7 +129,7 @@ vim.api.nvim_create_autocmd("CursorMoved", {
   group = group,
   callback = function()
     if vim.wo.winbar ~= "" then
-      vim.cmd("redrawstatus!")
+      vim.cmd("redrawstatus") -- current window only
     end
   end,
 })

@@ -11,7 +11,7 @@ return {
     -- Tell svelte about saved JS/TS files (sveltejs/language-tools#2008)
     vim.api.nvim_create_autocmd("BufWritePost", {
       pattern = { "*.js", "*.ts" },
-      group = vim.api.nvim_create_augroup("pxndxs.svelte", {}),
+      group = vim.api.nvim_create_augroup("pxndxs.svelte." .. client.id, {}), -- one per client
       callback = function(ctx)
         client:notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
       end,

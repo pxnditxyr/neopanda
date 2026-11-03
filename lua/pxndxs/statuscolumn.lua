@@ -9,13 +9,15 @@ end
 
 function M.render()
   local win = vim.g.statusline_winid
-  if not (vim.wo[win].number or vim.wo[win].relativenumber) then
+  local buf = vim.api.nvim_win_get_buf(win)
+  local numbered = vim.wo[win].number or vim.wo[win].relativenumber
+  -- Helper buffers (help, terminal, oil, start screen…) without numbers get no column; files keep their signs
+  if not numbered and vim.bo[buf].buftype ~= "" then
     return ""
   end
   local git, other
   if vim.v.virtnum == 0 then
     local row = vim.v.lnum - 1
-    local buf = vim.api.nvim_win_get_buf(win)
     local marks = vim.api.nvim_buf_get_extmarks(buf, -1, { row, 0 }, { row, -1 }, {
       details = true,
       type = "sign",
@@ -32,7 +34,7 @@ function M.render()
     end
   end
   -- %l keeps the native number column (relative numbers, CursorLineNr, diagnostic numhl)
-  return sign(other) .. "%l " .. sign(git)
+  return sign(other) .. (numbered and "%l " or "") .. sign(git)
 end
 
 vim.o.statuscolumn = "%!v:lua.require'pxndxs.statuscolumn'.render()"

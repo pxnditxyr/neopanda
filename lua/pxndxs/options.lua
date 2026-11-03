@@ -72,7 +72,7 @@ vim.o.timeoutlen = 300
 
 -- Over SSH, copy with OSC 52: setting 'clipboard' turns off its auto-detection, and on a remote
 -- mac pbcopy would copy there. Terminals often block OSC 52 reads, so paste uses the unnamed register.
-if vim.env.SSH_TTY or vim.env.SSH_CONNECTION then
+if require("pxndxs.env").is_ssh then
   local osc52 = require("vim.ui.clipboard.osc52")
   local function paste()
     return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
@@ -92,6 +92,8 @@ end)
 -- 0.13-dev only
 pcall(function()
   vim.opt.shortmess:append("u")
+end)
+pcall(function()
   vim.o.scrolloffpad = 1
 end)
 

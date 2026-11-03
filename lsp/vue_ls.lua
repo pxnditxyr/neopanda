@@ -21,6 +21,7 @@ return {
         end
         return
       end
+      retries = 0
       local id, command, payload = unpack(unpack(result))
       ts:exec_cmd({
         title = "vue_request_forward",

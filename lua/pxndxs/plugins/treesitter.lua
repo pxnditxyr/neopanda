@@ -4,7 +4,7 @@ return {
     "nvim-treesitter",
     lazy = false, -- does not support lazy-loading
     after = function()
-      -- Async and a no-op for installed parsers; bundled ones (c, lua, markdown, query, vim, vimdoc) are skipped
+      -- Async and a no-op for installed parsers; bundled ones (c, diff, lua, markdown, query, vim, vimdoc) are skipped
       require("nvim-treesitter").install({
         "astro",
         "bash",

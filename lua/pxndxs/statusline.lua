@@ -58,8 +58,8 @@ local function icon(buf)
   if not package.loaded["mini.icons"] then
     return ""
   end
-  local glyph, hl = MiniIcons.get("file", vim.api.nvim_buf_get_name(buf))
-  return ("%%#%s#%s "):format(hl, glyph)
+  local icon_glyph, hl = MiniIcons.get("file", vim.api.nvim_buf_get_name(buf))
+  return ("%%#%s#%s "):format(hl, icon_glyph)
 end
 
 local function file(buf)
@@ -82,7 +82,7 @@ local function file(buf)
     .. flags
 end
 
--- Filled by gitsigns (step 10) when present
+-- Filled by gitsigns when present
 local function git(buf)
   local head = vim.b[buf].gitsigns_head
   if not head or head == "" then
@@ -106,7 +106,7 @@ function M.render()
     or modes.n
   local pill, edge = "%#PxStlMode" .. mode[2] .. "#", "%#PxStlEdge" .. mode[2] .. "#"
   local diagnostics = next(vim.diagnostic.count(buf)) and vim.diagnostic.status(buf) .. " " or ""
-  local progress = vim.ui.progress_status()
+  local progress = vim.ui.progress_status and vim.ui.progress_status() or ""
   local ft = vim.bo[buf].filetype
   return table.concat({
     pill,
@@ -120,7 +120,7 @@ function M.render()
     "%<",
     file(buf),
     "%#StatusLine#%=",
-    vim.o.busy > 0 and "◐ " or "",
+    (vim.o.busy or 0) > 0 and "◐ " or "",
     debug(),
     progress ~= "" and "%#PxStlDim#" .. progress .. "  " or "",
     "%#StatusLine#",

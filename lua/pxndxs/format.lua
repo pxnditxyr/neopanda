@@ -8,10 +8,14 @@ local function formatter(buf)
   for _, c in ipairs(clients) do
     names[c.name] = true
   end
-  for _, c in ipairs(clients) do
-    if names.biome then
-      return c.name == "biome" and c or nil
+  if names.biome then
+    for _, c in ipairs(clients) do
+      if c.name == "biome" then
+        return c
+      end
     end
+  end
+  for _, c in ipairs(clients) do
     if not (names.vue_ls and c.name == "vtsls") then
       return c
     end

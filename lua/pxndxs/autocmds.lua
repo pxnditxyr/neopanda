@@ -13,7 +13,9 @@ autocmd(hl_events, {
   group = augroup("highlight_op"),
   desc = "Highlight yanked and put text",
   callback = function()
-    vim.hl.hl_op()
+    if vim.hl.hl_op then -- 0.13+
+      vim.hl.hl_op()
+    end
   end,
 })
 

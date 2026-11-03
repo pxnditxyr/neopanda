@@ -36,7 +36,7 @@ return {
         -- Also fills vim.b.gitsigns_head/gitsigns_status for the statusline
         on_attach = function(buf)
           local function map(mode, lhs, rhs, desc)
-            vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = desc })
+            vim.keymap.set(mode, lhs, rhs, { buf = buf, desc = desc })
           end
           local function range()
             return { vim.fn.line("."), vim.fn.line("v") }

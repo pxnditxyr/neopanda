@@ -1,5 +1,5 @@
 -- Editing plugins, only where Neovim has no native equivalent. Native and kept: multicursor (Q, zq, gQ,
--- <C-l>), [x/]x motions, visual an/in selection, LSP document colors, :move maps (keymaps.lua),
+-- <C-l>), visual an/in selection, LSP document colors, :move maps (keymaps.lua),
 -- directory buffers (- goes up), :grep + :cdo.
 return {
   {

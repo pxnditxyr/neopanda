@@ -63,6 +63,7 @@ end
 
 local function tools()
   health.start("🧰 Tools")
+  ---@type [string, fun(msg: string, advice?: string), string][]
   local list = {
     { "git", health.error, "vim.pack needs git" },
     { "rg", health.warn, ":grep falls back to the internal grep" },
@@ -70,7 +71,7 @@ local function tools()
     { "tree-sitter", health.warn, "nvim-treesitter needs it (0.26.1+) to build parsers" },
     { "cc", health.warn, "nvim-treesitter needs a C compiler to build parsers" },
     { "lazygit", health.warn, "<leader>gg (lazygit) is unavailable" },
-    { "claude", health.warn, "Claude Code CLI missing (<leader>aa); install it from claude.ai" },
+    { "claude", health.warn, "Claude Code CLI missing (<leader>cc); install it from claude.ai" },
     { "hurl", health.warn, ".hurl requests (<leader>rs) can't run" },
     { "jq", health.warn, "hurl responses show unformatted JSON" },
     { "psql", health.warn, "dadbod can't open PostgreSQL connections" },
@@ -79,9 +80,15 @@ local function tools()
     { "shellcheck", health.warn, "bashls shows no lint diagnostics" },
     { "shfmt", health.warn, "bashls can't format shell scripts" },
   }
-  -- nixd (and its formatter) only exist with Nix
+  -- nixd (and its formatter) only exist with Nix; without it Mason builds servers with node and go
   if env.is_nix then
     table.insert(list, { "nixfmt", health.warn, "nixd can't format Nix files" })
+  else
+    table.insert(
+      list,
+      { "node", health.warn, "Mason can't install npm servers (vtsls, eslint, …)" }
+    )
+    table.insert(list, { "go", health.warn, "Mason can't build gopls, delve and sqls" })
   end
   if env.is_linux then
     table.insert(
