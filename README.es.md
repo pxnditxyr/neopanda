@@ -28,7 +28,7 @@ Se abre con `npd` (o `neopanda`).
 - **LSP** — 23 servidores en `lsp/*.lua`, activos solo si están instalados; formateo al guardar vía el servidor;
   inlay hints, code lens, folding, resaltado de referencias; schemas para JSON/YAML.
 - **Completado** — menú nativo mientras escribes, firma encima del cursor, friendly-snippets + tus `snippets/`.
-- **UI** — catppuccin, statusline, statuscolumn y breadcrumbs nativos, mensajes ui2, render-markdown, indent scope.
+- **UI** — tema michipanda, selector de temas con vista previa, transparencia, flotantes de cristal, statusline, statuscolumn y breadcrumbs nativos, mensajes ui2, render-markdown, indent scope.
 - **Git** — gitsigns (hunks, blame, diff por palabra), lazygit flotante, pickers de commits y ramas, abrir en GitHub.
 - **IA** — texto fantasma de Copilot y sugerencias de siguiente edición vía el cliente LSP nativo, Claude Code
   conectado como su extensión de IDE, otras CLIs de IA (opencode, codex…) en una terminal lateral.
@@ -129,6 +129,9 @@ nativos.
 | `<leader><Tab>n` | Pestaña nueva (`gt` / `gT` para cambiar) | n |
 | `<leader>uu` | Mostrar / ocultar undotree | n |
 | `<leader>ud` / `<leader>uv` | Activar / desactivar diagnósticos / líneas virtuales de diagnóstico | n |
+| `<leader>uc` | Elegir tema: al moverte se previsualiza, `<CR>` lo deja, `<Esc>` vuelve al anterior | n |
+| `<leader>uT` | Activar / desactivar transparencia | n |
+| `<leader>ug` | Activar / desactivar flotantes de cristal (sin fondo) | n |
 | `<C-q>` | Salir de una terminal (Claude, lazygit, `:terminal`) a la ventana anterior | t |
 
 Multicursor nativo: `Q` añade o quita un cursor, `zq{movimiento}` pone uno en cada destino (`zqgn` = cada
@@ -292,7 +295,7 @@ busca actualizaciones. Dockerfile, Compose y Bake usan docker-language-server.
 `:mksession` nativo. Al salir se guarda la sesión del directorio (una por rama de git que no sea main/master); abrir
 `npd` sin archivo la restaura. `npd archivo`, stdin y `ZR` ni restauran ni guardan.
 Sin sesión que restaurar, una pantalla de inicio (mini.starter) muestra el panda y un menú: `f` buscar archivo,
-`n` archivo nuevo, `g` grep, `r` archivos recientes, `c` config, `s` restaurar sesión, `u` actualizar plugins,
+`n` archivo nuevo, `g` grep, `r` archivos recientes, `c` config, `t` temas, `s` restaurar sesión, `u` actualizar plugins,
 `q` salir. El pie muestra los ms de arranque, el número de plugins y la versión de Neovim. En ventanas pequeñas
 se quita el panda y luego el arte (`lua/pxndxs/dashboard.lua`).
 
@@ -317,6 +320,7 @@ return {
   ui2 = true,        -- UI experimental de mensajes / línea de comandos
   autoformat = true, -- formatear al guardar (alternar: <leader>uf, buffer: <leader>uF)
   nerd_font = true,  -- iconos Nerd Font (signos, statusline, completado, DBUI); false = texto plano
+  transparent = true, -- fondo de la terminal detrás del editor, hasta cambiarlo con <leader>uT
 }
 ```
 
@@ -373,5 +377,8 @@ nix build            # ./result/bin/npd
 Estructura: `init.lua` carga los módulos nativos de `lua/pxndxs/` (opciones, atajos, LSP, completado,
 statusline…), luego `lua/pxndxs/pack.lua` instala los plugins y lze carga sus specs desde
 `lua/pxndxs/plugins/<área>.lua`. Las configs de servidor viven en `lsp/` y el health en `lua/neopanda/health.lua`.
+
+`colors/michipanda.lua` es generado: cambia la paleta en `scripts/gen-michipanda.lua` y ejecuta
+`nvim --clean -l scripts/gen-michipanda.lua`.
 
 Los archivos `lsp/*.lua` se basan en [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) (Apache-2.0).

@@ -99,6 +99,7 @@
             fileset = pkgs.lib.fileset.unions [
               ./init.lua
               ./lua
+              ./colors
               ./lsp
               ./nvim-pack-lock.json
             ];

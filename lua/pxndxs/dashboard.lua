@@ -46,7 +46,7 @@ end
 
 -- Full art (text + panda) when it fits with the menu, else only the text, else nothing
 function M.header()
-  local menu = 14 -- items, footer, blank lines, statusline and command line
+  local menu = 15 -- items, footer, blank lines, statusline and command line
   local text_h, panda_h = #vim.split(text, "\n"), #vim.split(panda, "\n")
   if vim.o.lines >= text_h + panda_h + menu then
     local centered = vim.tbl_map(function(l)

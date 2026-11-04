@@ -4,12 +4,14 @@
 ---@field ui2 boolean
 ---@field autoformat boolean
 ---@field nerd_font boolean
+---@field transparent boolean
 
 ---@type pxndxs.Settings
 local defaults = {
   ui2 = true,
   autoformat = true,
   nerd_font = true, -- false: plain letters instead of icons
+  transparent = true, -- default until toggled with <leader>uT, which is remembered
 }
 
 local ok, overrides = pcall(require, "pxndxs.settings_local")

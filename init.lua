@@ -15,6 +15,7 @@ require("pxndxs.completion")
 require("pxndxs.lsp")
 require("pxndxs.format")
 require("pxndxs.session")
+require("pxndxs.theme") -- before the modules that derive colors from it
 require("pxndxs.statusline")
 require("pxndxs.statuscolumn")
 require("pxndxs.breadcrumbs")

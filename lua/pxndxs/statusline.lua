@@ -35,8 +35,9 @@ end
 
 -- Mode pills: the accent of each mode as background
 local function set_highlights()
-  local bg = color("StatusLine", "bg") or color("Normal", "bg")
-  local dark = color("Normal", "bg") or bg
+  local theme_bg = require("pxndxs.theme").bg -- Normal's own can be empty (transparency)
+  local bg = color("StatusLine", "bg") or theme_bg
+  local dark = theme_bg or bg
   for _, group in ipairs({
     "Function",
     "String",

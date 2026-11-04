@@ -7,7 +7,8 @@ return {
     after = function()
       -- Integrations are detected from the installed plugins (vim.pack)
       require("catppuccin").setup({ flavour = "mocha" })
-      vim.cmd.colorscheme("catppuccin-mocha")
+      -- After setup: the remembered theme can be this one
+      require("pxndxs.theme").apply()
     end,
   },
   {
@@ -58,6 +59,7 @@ return {
             MiniPick.builtin.files(nil, { source = { cwd = require("pxndxs.env").config } })
           end),
         },
+        { "Themes", pick(require("pxndxs.theme").pick) },
         { "Session restore", require("pxndxs.session").load },
         { "Update plugins", "packupdate" },
         { "Quit", "qall" },
@@ -120,6 +122,9 @@ return {
   {
     "mini.extra",
     dep_of = "mini.pick",
+    after = function()
+      require("mini.extra").setup() -- the global the start screen items use
+    end,
   },
   {
     "mini.pick",
@@ -127,7 +132,24 @@ return {
     after = function()
       local pick = require("mini.pick")
       local extra = require("mini.extra")
-      pick.setup()
+      pick.setup({
+        options = { content_from_bottom = true }, -- prompt in the bottom border, best match next to it
+        window = {
+          -- Centered modal, recomputed on resize. Keeps clear of the statusline and command line.
+          config = function()
+            local lines = vim.o.lines - vim.o.cmdheight - 1
+            local height = math.max(1, math.floor(0.9 * lines) - 2) -- 2: the border
+            local width = math.max(1, math.floor(0.8 * vim.o.columns) - 2)
+            return {
+              anchor = "NW",
+              height = height,
+              width = width,
+              row = math.floor(0.5 * (lines - height - 2)),
+              col = math.floor(0.5 * (vim.o.columns - width - 2)),
+            }
+          end,
+        },
+      })
       -- z=, :tselect, :browse oldfiles and plugins that ask to choose use the picker too
       vim.ui.select = pick.ui_select
 
@@ -153,6 +175,7 @@ return {
         extra.pickers.lsp({ scope = "workspace_symbol" })
       end, "Symbols (workspace)")
       map("<leader>sR", pick.builtin.resume, "Resume last picker")
+      map("<leader>uc", require("pxndxs.theme").pick, "Themes")
       map("<leader>gl", extra.pickers.git_commits, "Commits")
       map("<leader>gL", function()
         extra.pickers.git_commits({ path = vim.fn.expand("%") })
@@ -180,8 +203,16 @@ return {
   {
     "render-markdown.nvim",
     ft = "markdown",
-    after = function()
-      require("render-markdown").setup({})
+    before = function()
+      -- Read when the plugin loads: the first hover loads it and renders right away, an after setup() comes too late
+      vim.g.render_markdown_config = {
+        overrides = {
+          buftype = {
+            -- Hover and other floats: code takes the float's background, so glass reaches it
+            nofile = { code = { highlight = "NormalFloat", highlight_border = false } },
+          },
+        },
+      }
     end,
   },
 }

@@ -60,6 +60,13 @@ health_clean() {
   [[ -e "$out" && ! -s "$out" ]]
 }
 
+default_theme() {
+  local out="$WORK/theme"
+  rm -f "$out"
+  npd -c "lua vim.fn.writefile({ vim.g.colors_name }, '$out')"
+  [[ "$(cat "$out" 2>/dev/null)" == michipanda ]]
+}
+
 echo "🆕 first start"
 PINNED="$(sed -n "s/^export NEOPANDA_CONFIG=.*'\(.*\)'}$/\1/p" "$NPD")/nvim-pack-lock.json"
 npd
@@ -68,6 +75,7 @@ check "marker written" test -s "$MARKER"
 check "state lockfile is writable" test -w "$LOCK"
 check "nothing written to the config dir" test ! -e "$XDG_CONFIG_HOME/neopanda"
 check "health has no ERROR" health_clean
+check "default theme comes from the store" default_theme
 
 echo "🔁 second start, no network"
 before="$(cat "$MARKER")"

@@ -27,6 +27,21 @@ trap 'rm -f "$result"' EXIT
   if vim.v.errmsg ~= '' then table.insert(out, 'startup: ' .. vim.v.errmsg) end
   local ok, err = pcall(vim.api.nvim_exec_autocmds, 'User', { pattern = 'DeferredUIEnter' })
   if not ok then table.insert(out, 'DeferredUIEnter: ' .. err) end
+  local theme, prev = require('pxndxs.theme'), vim.g.colors_name
+  local function hl(name) return vim.api.nvim_get_hl(0, { name = name, link = false }) end
+  local was, was_glass = theme.transparent, theme.glass
+  theme.transparent, theme.glass = true, false
+  vim.cmd.colorscheme('michipanda')
+  if theme.bg ~= 0x24283b or hl('Normal').bg or not hl('Normal').fg or not hl('NormalFloat').bg or not hl('Visual').bg then
+    table.insert(out, 'theme: michipanda or its transparency is wrong')
+  end
+  theme.glass = true
+  vim.cmd.colorscheme('michipanda')
+  if hl('NormalFloat').bg or hl('Pmenu').bg or not hl('PmenuSel').bg then
+    table.insert(out, 'theme: glass is wrong')
+  end
+  theme.transparent, theme.glass = was, was_glass
+  vim.cmd.colorscheme(prev)
   vim.cmd('checkhealth neopanda vim.pack')
   -- Async: the filetype is set when every check is done
   if not vim.wait(30000, function() return vim.bo.filetype == 'checkhealth' end) then

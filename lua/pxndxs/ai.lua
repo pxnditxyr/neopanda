@@ -79,7 +79,7 @@ end
 -- (catppuccin: teal #689796 vs gray italic comments), still ~5:1 contrast. NES diff: red struck-out
 -- deletion and green addition, each on a faint tint of its own color.
 local function set_highlights()
-  local bg = color("Normal", "bg") or 0x000000
+  local bg = require("pxndxs.theme").bg or 0x000000
   local hint = color("DiagnosticHint", "fg") or color("Comment", "fg") or 0x808080
   vim.api.nvim_set_hl(0, "ComplHint", { fg = mix(hint, bg, 0.35) })
   vim.api.nvim_set_hl(0, "ComplHintMore", { fg = mix(hint, bg, 0.2), bold = true })
