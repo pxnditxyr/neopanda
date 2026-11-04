@@ -4,7 +4,7 @@ local health = vim.health
 local env = require("pxndxs.env")
 local settings = require("pxndxs.settings")
 
-local config_dir = vim.fn.stdpath("config")
+local config_dir = env.config
 
 -- "name ······ " aligned to width
 local function pad(name, width)
@@ -26,7 +26,12 @@ local function neovim()
   else
     health.error(pad("Neovim", 10) .. version, "neopanda targets Neovim nightly 0.13+")
   end
-  health.ok(pad("Config", 10) .. vim.fn.fnamemodify(config_dir, ":~"))
+  local store = not vim.uv.fs_access(config_dir, "W")
+  health.ok(
+    pad("Config", 10)
+      .. (store and "❄️ read-only · " or "")
+      .. vim.fn.fnamemodify(config_dir, ":~")
+  )
 end
 
 local function environment()
@@ -55,7 +60,7 @@ local function settings_section()
     local shown = value == true and "● on" or value == false and "○ off" or vim.inspect(value)
     health.info(pad(name, 12) .. shown)
   end
-  local has_local = vim.uv.fs_stat(config_dir .. "/lua/pxndxs/settings_local.lua") ~= nil
+  local has_local = #vim.api.nvim_get_runtime_file("lua/pxndxs/settings_local.lua", false) > 0
   health.info(
     pad("overrides", 12) .. (has_local and "📝 settings_local.lua" or "○ none · defaults")
   )
@@ -157,12 +162,12 @@ end
 
 local function plugins()
   health.start("📦 Plugins")
-  if vim.uv.fs_access(config_dir, "W") then
-    health.ok(pad("Config dir", 12) .. "writable")
-  else
-    health.error(pad("Config dir", 12) .. "read-only", "vim.pack writes nvim-pack-lock.json there")
-  end
   local lockfile = vim.o.packlockfile
+  if vim.uv.fs_access(vim.fs.dirname(lockfile), "W") then
+    health.ok(pad("Lockfile dir", 12) .. "writable")
+  else
+    health.error(pad("Lockfile dir", 12) .. "read-only", "vim.pack writes " .. lockfile)
+  end
   if not vim.uv.fs_stat(lockfile) then
     health.ok(pad("Lockfile", 12) .. "none yet · no plugins")
     return
@@ -171,7 +176,7 @@ local function plugins()
   if ok and type(data) == "table" then
     health.ok(pad("Lockfile", 12) .. ("%d pinned"):format(vim.tbl_count(data.plugins or {})))
   else
-    health.error(pad("Lockfile", 12) .. "invalid JSON", "git checkout -- nvim-pack-lock.json")
+    health.error(pad("Lockfile", 12) .. "invalid JSON", "delete or restore " .. lockfile)
   end
 end
 

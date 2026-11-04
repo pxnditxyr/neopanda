@@ -40,26 +40,38 @@ Se abre con `npd` (o `neopanda`).
 
 ## Instalación
 
-### Nix + home-manager (macOS / NixOS)
+### Nix (macOS / NixOS / Linux)
 
-Añade el flake como input y activa el módulo. El directorio de config es un symlink a tu clon, así `vim.pack` puede
-escribir su lockfile y los cambios en Lua se aplican sin rebuild.
+Sin clonar. Pruébalo sin instalar:
+
+```sh
+nix run github:pxnditxyr/neopanda
+```
+
+O añade el flake a tu config y haz rebuild:
 
 ```nix
 # flake.nix
 inputs.neopanda.url = "github:pxnditxyr/neopanda";
 
-# home-manager
-imports = [ inputs.neopanda.homeModules.default ];
-programs.neopanda = {
-  enable = true;
-  configPath = "${config.home.homeDirectory}/dev/neopanda"; # tu clon
-};
+# home-manager (o environment.systemPackages)
+home.packages = [ inputs.neopanda.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 ```
+
+Luego abre `npd`. En el primer arranque descarga los plugins y compila los parsers por sí solo, cerca de un minuto y sin
+preguntas, así que necesita red una vez. Si no puede descargarlos, lo reintenta en el siguiente arranque.
 
 El wrapper `npd` pone en el `PATH` todo lo que la config necesita: git, ripgrep, fd, lazygit, tree-sitter, los
 servidores LSP (incluido el de Copilot, el único paquete no libre), adaptadores de depuración, hurl, jq y clientes
-de bases de datos.
+de bases de datos. La config también va dentro de `npd`, de solo lectura en el store de Nix; el lockfile de los plugins
+es una copia escribible en `~/.local/state/neopanda`.
+
+Para cambiar la config, clona el repo y apunta `npd` a él. Los cambios en Lua se aplican en el siguiente arranque, sin
+rebuild, y `:packupdate` escribe el lockfile del repo:
+
+```sh
+NEOPANDA_CONFIG=~/dev/neopanda npd
+```
 
 ### Ubuntu / WSL2 (sin Nix)
 
@@ -92,7 +104,7 @@ portapapeles funciona vía WSLg con `xclip`.
 rm -rf ~/.config/neopanda ~/.local/share/neopanda ~/.local/state/neopanda ~/.cache/neopanda
 ```
 
-Después quita el bloque `# neopanda` de tu rc de shell (bootstrap) o el módulo (home-manager).
+Después quita el bloque `# neopanda` de tu rc de shell (bootstrap) o el paquete de tu config de Nix.
 
 ## Uso
 
@@ -297,8 +309,8 @@ Los atajos se eligieron para Dvorak US en un teclado 60 % (sin teclas F):
 
 ## Ajustes
 
-Los ajustes por máquina van en `lua/pxndxs/settings_local.lua` (ignorado por git), mezclado sobre los valores por
-defecto:
+Los ajustes por máquina van en `~/.config/neopanda/lua/pxndxs/settings_local.lua` (ignorado por git en un clon), mezclado
+sobre los valores por defecto:
 
 ```lua
 return {
@@ -314,15 +326,16 @@ return {
 
 ## Actualizar
 
-Los plugins están fijados en `nvim-pack-lock.json` — commitéalo.
+Los plugins están fijados en `nvim-pack-lock.json` — commitéalo. Con Nix, un lockfile fijado nuevo mueve tus plugins a él
+en el siguiente arranque y reemplaza lo que hizo un `:packupdate` local.
 
 | Tarea | Cómo |
 |---|---|
-| Actualizar plugins | `:packupdate` → revisar → `:w` para aplicar, `:q` para cancelar → commitear el lockfile |
-| Revertir | `git checkout -- nvim-pack-lock.json`, luego `:packupdate ++lockfile` |
+| Actualizar plugins | `:packupdate` → revisar → `:w` para aplicar, `:q` para cancelar; en un clon, commitear el lockfile |
+| Revertir (clon) | `git checkout -- nvim-pack-lock.json`, luego `:packupdate ++lockfile` |
 | Quitar un plugin | Borrar su línea en `lua/pxndxs/pack.lua`, `ZR`, `:packdel ++all` |
-| Máquina nueva | Clonar y abrir `npd`: las revisiones fijadas se instalan en el primer arranque |
-| Actualizar Neovim y herramientas (Nix) | `nix flake update` en el clon, luego rebuild de home-manager |
+| Máquina nueva | Abrir `npd`: las revisiones fijadas se instalan en el primer arranque |
+| Actualizar neopanda, Neovim y herramientas (Nix) | `nix flake update neopanda` en tu config, luego rebuild |
 
 Los pasos de build (p. ej. `:TSUpdate`) van en la tabla `build` de `lua/pxndxs/pack.lua`.
 
@@ -331,6 +344,8 @@ Los pasos de build (p. ej. `:TSUpdate`) van en la tabla `build` de `lua/pxndxs/p
 - `:checkhealth neopanda` — versión de Neovim, entorno, ajustes, herramientas, servidores LSP, adaptadores de
   depuración y plugins.
 - `nix develop -c scripts/smoke-test.sh` — carga headless, errores del health, `bash -n`, shellcheck y stylua.
+- `scripts/test-install.sh` — construye `npd` y lo corre sobre carpetas vacías: primer arranque, sin red, lockfile fijado
+  nuevo y descargas fallidas. Necesita red.
 - `.github/workflows/ci.yml` — las mismas comprobaciones más el bootstrap de Ubuntu. Solo manual (Actions → CI →
   Run workflow).
 - Linux: los servidores se enteran de los archivos nuevos vía `inotifywait`. Mantén los proyectos de WSL en `~` (no

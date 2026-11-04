@@ -1,5 +1,9 @@
 -- neopanda 🐼
 vim.g.pxndxs_start = vim.uv.hrtime() -- start screen footer
+-- Set by the Nix wrapper (config in the store) or by hand (a clone, to edit it live)
+if vim.env.NEOPANDA_CONFIG then
+  vim.opt.runtimepath:prepend(vim.env.NEOPANDA_CONFIG)
+end
 vim.loader.enable()
 
 require("pxndxs.options")

@@ -55,7 +55,7 @@ return {
         {
           "Config",
           pick(function()
-            MiniPick.builtin.files(nil, { source = { cwd = vim.fn.stdpath("config") } })
+            MiniPick.builtin.files(nil, { source = { cwd = require("pxndxs.env").config } })
           end),
         },
         { "Session restore", require("pxndxs.session").load },

@@ -21,8 +21,6 @@ jobs:
           extra_nix_config: accept-flake-config = true
       - run: nix flake check
       - run: nix build
-      - name: Link config
-        run: mkdir -p ~/.config && ln -s "$PWD" ~/.config/neopanda
       - name: Smoke test
         run: nix develop -c env NVIM="$PWD/result/bin/npd" scripts/smoke-test.sh
 

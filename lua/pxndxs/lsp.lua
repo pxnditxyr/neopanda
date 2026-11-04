@@ -171,7 +171,7 @@ end
 -- Enable every server in our lsp/ dir (not plugins' lsp/ files) whose binary is installed
 local servers = vim.tbl_map(function(file)
   return vim.fn.fnamemodify(file, ":t:r")
-end, vim.fn.globpath(vim.fn.stdpath("config"), "lsp/*.lua", false, true))
+end, vim.fn.globpath(require("pxndxs.env").config, "lsp/*.lua", false, true))
 for _, name in ipairs(servers) do
   local cmd = (vim.lsp.config[name] or {}).cmd
   if type(cmd) == "table" and vim.fn.executable(cmd[1]) == 1 then

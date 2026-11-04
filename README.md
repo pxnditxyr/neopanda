@@ -37,25 +37,38 @@ Start it with `npd` (or `neopanda`).
 
 ## Install
 
-### Nix + home-manager (macOS / NixOS)
+### Nix (macOS / NixOS / Linux)
 
-Add the flake as an input and enable the module. The config dir is a symlink to your clone, so `vim.pack` can write
-its lockfile and Lua edits apply without a rebuild.
+No clone. Try it without installing:
+
+```sh
+nix run github:pxnditxyr/neopanda
+```
+
+Or add the flake to your config and rebuild:
 
 ```nix
 # flake.nix
 inputs.neopanda.url = "github:pxnditxyr/neopanda";
 
-# home-manager
-imports = [ inputs.neopanda.homeModules.default ];
-programs.neopanda = {
-  enable = true;
-  configPath = "${config.home.homeDirectory}/dev/neopanda"; # your clone
-};
+# home-manager (or environment.systemPackages)
+home.packages = [ inputs.neopanda.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 ```
 
+Then open `npd`. On the first start it downloads the plugins and builds the parsers by itself, about a minute with no
+questions, so it needs network once. If it can't download them, it retries on the next start.
+
 The `npd` wrapper puts everything the config needs on `PATH`: git, ripgrep, fd, lazygit, tree-sitter, the LSP
-servers (including Copilot's, the only unfree package), debug adapters, hurl, jq and database clients.
+servers (including Copilot's, the only unfree package), debug adapters, hurl, jq and database clients. The config
+itself is inside `npd` too, read-only in the Nix store; the plugins' lockfile is a writable copy in
+`~/.local/state/neopanda`.
+
+To change the config, clone the repo and point `npd` at it. Lua edits apply on the next start, with no rebuild, and
+`:packupdate` writes the repo's lockfile:
+
+```sh
+NEOPANDA_CONFIG=~/dev/neopanda npd
+```
 
 ### Ubuntu / WSL2 (no Nix)
 
@@ -87,7 +100,7 @@ through WSLg with `xclip`.
 rm -rf ~/.config/neopanda ~/.local/share/neopanda ~/.local/state/neopanda ~/.cache/neopanda
 ```
 
-Then remove the `# neopanda` block from your shell rc (bootstrap) or the module (home-manager).
+Then remove the `# neopanda` block from your shell rc (bootstrap) or the package from your Nix config.
 
 ## Usage
 
@@ -289,7 +302,8 @@ The keymaps were chosen for Dvorak US on a 60% keyboard (no F keys):
 
 ## Settings
 
-Per-machine overrides go in `lua/pxndxs/settings_local.lua` (gitignored), merged over the defaults:
+Per-machine overrides go in `~/.config/neopanda/lua/pxndxs/settings_local.lua` (gitignored in a clone), merged over the
+defaults:
 
 ```lua
 return {
@@ -305,15 +319,16 @@ return {
 
 ## Updating
 
-Plugins are pinned in `nvim-pack-lock.json` — commit it.
+Plugins are pinned in `nvim-pack-lock.json` — commit it. With Nix, a new pinned lockfile moves your plugins to it on the
+next start, replacing what a local `:packupdate` did.
 
 | Task | How |
 |---|---|
-| Update plugins | `:packupdate` → review → `:w` to apply, `:q` to cancel → commit the lockfile |
-| Revert | `git checkout -- nvim-pack-lock.json`, then `:packupdate ++lockfile` |
+| Update plugins | `:packupdate` → review → `:w` to apply, `:q` to cancel; in a clone, commit the lockfile |
+| Revert (clone) | `git checkout -- nvim-pack-lock.json`, then `:packupdate ++lockfile` |
 | Remove a plugin | Delete its line in `lua/pxndxs/pack.lua`, `ZR`, `:packdel ++all` |
-| New machine | Clone and start `npd`: the locked revisions install on the first start |
-| Update Neovim and tools (Nix) | `nix flake update` in the clone, then rebuild home-manager |
+| New machine | Start `npd`: the locked revisions install on the first start |
+| Update neopanda, Neovim and tools (Nix) | `nix flake update neopanda` in your config, then rebuild |
 
 Build steps (e.g. `:TSUpdate`) go in the `build` table of `lua/pxndxs/pack.lua`.
 
@@ -321,6 +336,8 @@ Build steps (e.g. `:TSUpdate`) go in the `build` table of `lua/pxndxs/pack.lua`.
 
 - `:checkhealth neopanda` — Neovim version, environment, settings, tools, LSP servers, debug adapters and plugins.
 - `nix develop -c scripts/smoke-test.sh` — headless load, health errors, `bash -n`, shellcheck and stylua.
+- `scripts/test-install.sh` — builds `npd` and runs it on empty dirs: first start, offline start, new pinned lockfile and
+  failed downloads. Needs network.
 - `.github/workflows/ci.yml` — the same checks plus the Ubuntu bootstrap. Manual only (Actions → CI → Run workflow).
 - Linux: servers learn about new files through `inotifywait`. Keep WSL projects under `~` (not `/mnt/c`), and raise
   `fs.inotify.max_user_watches` with sysctl if you see "no space left on device".

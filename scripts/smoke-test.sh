@@ -5,6 +5,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export NVIM_APPNAME=neopanda
+export NEOPANDA_CONFIG="$REPO_DIR" # this tree, not the copy inside npd
 NVIM="${NVIM:-nvim}"
 command -v npd >/dev/null && [[ "$NVIM" == nvim ]] && NVIM=npd
 

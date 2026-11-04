@@ -15,7 +15,6 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       neovim-nightly-overlay,
       ...
@@ -95,6 +94,16 @@
               inotify-tools # LSP file watching (inotifywait backend)
               lldb # Rust debug adapter (lldb-dap); macOS uses Xcode's
             ];
+          # The config npd runs. Only what Neovim reads, so docs and scripts don't rebuild it.
+          config = pkgs.lib.fileset.toSource {
+            root = ./.;
+            fileset = pkgs.lib.fileset.unions [
+              ./init.lua
+              ./lua
+              ./lsp
+              ./nvim-pack-lock.json
+            ];
+          };
           # Only exposes npd and neopanda; never shadows a system `nvim`.
           neopanda =
             pkgs.runCommand "neopanda"
@@ -107,6 +116,8 @@
                   makeWrapper ${neovim}/bin/nvim $out/bin/$name \
                     --set-default NVIM_APPNAME neopanda \
                     --set NEOPANDA_NIX 1 \
+                    --set-default NEOPANDA_CONFIG ${config} \
+                    --add-flags '-u "$NEOPANDA_CONFIG/init.lua"' \
                     --set NEOPANDA_VUE_LS ${pkgs.vue-language-server}/lib/language-tools/packages/language-server \
                     --prefix PATH : ${pkgs.lib.makeBinPath tools}
                 done
@@ -130,37 +141,5 @@
           ];
         };
       });
-
-      homeModules.default =
-        {
-          config,
-          lib,
-          pkgs,
-          ...
-        }:
-        let
-          cfg = config.programs.neopanda;
-        in
-        {
-          options.programs.neopanda = {
-            enable = lib.mkEnableOption "neopanda";
-            package = lib.mkOption {
-              type = lib.types.package;
-              default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-              defaultText = lib.literalExpression "neopanda.packages.\${system}.default";
-              description = "The neopanda package providing `npd` and `neopanda`.";
-            };
-            configPath = lib.mkOption {
-              type = lib.types.str;
-              example = lib.literalExpression ''"''${config.home.homeDirectory}/src/neopanda"'';
-              description = "Absolute path to the neopanda checkout, symlinked as ~/.config/neopanda so vim.pack can write its lockfile.";
-            };
-          };
-
-          config = lib.mkIf cfg.enable {
-            home.packages = [ cfg.package ];
-            xdg.configFile."neopanda".source = config.lib.file.mkOutOfStoreSymlink cfg.configPath;
-          };
-        };
     };
 }

@@ -1,5 +1,25 @@
 -- Plugins: vim.pack, pinned in nvim-pack-lock.json (created with the first plugin; commit it).
 -- :packupdate to update, :packupdate ++lockfile to revert, :packdel ++all after removing a spec.
+local config = require("pxndxs.env").config
+local pinned = config .. "/nvim-pack-lock.json"
+local lockfile = pinned
+local seed, marker -- only with a read-only config
+
+-- A read-only config (Nix store) keeps a writable copy of the lockfile. The copy is replaced only when the pinned
+-- one changes, so :packupdate lasts until then. Must be set before the first vim.pack call.
+if not vim.uv.fs_access(config, "W") then
+  local state = vim.fn.stdpath("state")
+  lockfile, marker = state .. "/nvim-pack-lock.json", state .. "/nvim-pack-lock.seed"
+  local lines = vim.fn.readfile(pinned)
+  local hash = vim.fn.sha256(table.concat(lines, "\n"))
+  local seeded = vim.uv.fs_stat(marker) and vim.fn.readfile(marker)[1]
+  if seeded ~= hash then
+    seed = { hash = hash, plugins = vim.json.decode(table.concat(lines, "\n")).plugins }
+    vim.fn.mkdir(state, "p")
+    vim.fn.writefile(lines, lockfile) -- not fs_copyfile: it would keep the store's read-only mode
+  end
+end
+vim.o.packlockfile = lockfile
 
 -- Build steps run after install/update
 ---@type table<string, fun(ev: table)>
@@ -82,6 +102,35 @@ local specs = {
 }
 
 -- Install only; lze loads each plugin from its spec in lua/pxndxs/plugins/
-vim.pack.add(specs, { load = function() end })
-vim.cmd.packadd("lze")
+vim.pack.add(specs, { load = function() end, confirm = false })
+
+-- A new pinned lockfile moves the plugins to it. The marker is written only when all of them got there, so a failed
+-- download retries on the next start instead of losing pins.
+if seed then
+  local function synced()
+    local revs = {}
+    for _, p in ipairs(vim.pack.get()) do -- info: the rev on disk, not the lockfile's
+      revs[p.spec.name] = p.rev
+    end
+    for name, data in pairs(seed.plugins) do
+      if revs[name] ~= data.rev then
+        return false
+      end
+    end
+    return true
+  end
+  if not synced() then
+    pcall(vim.pack.update, nil, { force = true, target = "lockfile" })
+  end
+  if synced() then
+    vim.fn.writefile({ seed.hash }, marker)
+  end
+end
+if not pcall(vim.cmd.packadd, "lze") then
+  vim.notify(
+    "Plugins not installed (no network?). They install on the next start.",
+    vim.log.levels.WARN
+  )
+  return
+end
 require("lze").load({ import = "pxndxs.plugins" })
