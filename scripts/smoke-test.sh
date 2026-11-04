@@ -42,6 +42,15 @@ trap 'rm -f "$result"' EXIT
   end
   theme.transparent, theme.glass = was, was_glass
   vim.cmd.colorscheme(prev)
+  -- Tab line: many tabs fit, the current one stays visible, same names get their folder
+  vim.cmd('edit a/same.lua | tabedit b/same.lua')
+  for _ = 1, 40 do vim.cmd('tabnew') end
+  vim.cmd('2tabnext')
+  local line = vim.api.nvim_eval_statusline(require('pxndxs.tabline').render(), { use_tabline = true, maxwidth = 0 })
+  if line.width > vim.o.columns or not line.str:find('b/same.lua', 1, true) or not line.str:find('+', 1, true) then
+    table.insert(out, 'tabline: ' .. line.str)
+  end
+  vim.cmd('tabonly | enew')
   vim.cmd('checkhealth neopanda vim.pack')
   -- Async: the filetype is set when every check is done
   if not vim.wait(30000, function() return vim.bo.filetype == 'checkhealth' end) then

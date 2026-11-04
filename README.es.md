@@ -28,7 +28,7 @@ Se abre con `npd` (o `neopanda`).
 - **LSP** — 23 servidores en `lsp/*.lua`, activos solo si están instalados; formateo al guardar vía el servidor;
   inlay hints, code lens, folding, resaltado de referencias; schemas para JSON/YAML.
 - **Completado** — menú nativo mientras escribes, firma encima del cursor, friendly-snippets + tus `snippets/`.
-- **UI** — tema michipanda, selector de temas con vista previa, transparencia, flotantes de cristal, statusline, statuscolumn y breadcrumbs nativos, mensajes ui2, render-markdown, indent scope.
+- **UI** — tema michipanda, selector de temas con vista previa, transparencia, flotantes de cristal, statusline, línea de pestañas, statuscolumn y breadcrumbs nativos, mensajes ui2, render-markdown, indent scope.
 - **Git** — gitsigns (hunks, blame, diff por palabra), lazygit flotante, pickers de commits y ramas, abrir en GitHub.
 - **IA** — texto fantasma de Copilot y sugerencias de siguiente edición vía el cliente LSP nativo, Claude Code
   conectado como su extensión de IDE, otras CLIs de IA (opencode, codex…) en una terminal lateral.

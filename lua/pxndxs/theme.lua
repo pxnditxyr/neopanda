@@ -24,6 +24,41 @@ end
 -- For code that derives colors from it (statusline pills, AI ghost text).
 M.bg = normal_bg()
 
+-- For colors derived from the theme. OKLab: perceptual, no muddy mid-tones
+local function oklab(c)
+  local function lin(x)
+    x = x / 255
+    return x <= 0.04045 and x / 12.92 or ((x + 0.055) / 1.055) ^ 2.4
+  end
+  local r, g, b =
+    lin(bit.rshift(c, 16)), lin(bit.band(bit.rshift(c, 8), 255)), lin(bit.band(c, 255))
+  local l = (0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b) ^ (1 / 3)
+  local m = (0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b) ^ (1 / 3)
+  local s = (0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b) ^ (1 / 3)
+  return {
+    0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s,
+  }
+end
+-- `a` moved toward `b` by `t` (0..1), as #rrggbb
+function M.mix(a, b, t)
+  local x, y = oklab(a), oklab(b)
+  local L, A, B = x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t, x[3] + (y[3] - x[3]) * t
+  local l = (L + 0.3963377774 * A + 0.2158037573 * B) ^ 3
+  local m = (L - 0.1055613458 * A - 0.0638541728 * B) ^ 3
+  local s = (L - 0.0894841775 * A - 1.2914855480 * B) ^ 3
+  local function srgb(v)
+    v = math.min(math.max(v, 0), 1)
+    return math.floor(255 * (v <= 0.0031308 and 12.92 * v or 1.055 * v ^ (1 / 2.4) - 0.055) + 0.5)
+  end
+  return ("#%02x%02x%02x"):format(
+    srgb(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+    srgb(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+    srgb(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)
+  )
+end
+
 local clear = {
   "Normal",
   "NormalNC",
@@ -39,7 +74,6 @@ local clear = {
   "SignColumn",
   "FoldColumn",
   "LineNr",
-  "TabLineFill",
 }
 
 -- Glass: floats without a background, so the terminal shows through. Selection groups stay solid.
