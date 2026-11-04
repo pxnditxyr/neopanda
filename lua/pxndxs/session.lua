@@ -66,6 +66,20 @@ function M.save()
   vim.cmd("mksession! " .. vim.fn.fnameescape(file()))
 end
 
+local function shows_nothing()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local bo = vim.bo[buf]
+    if
+      vim.api.nvim_win_get_config(win).relative == ""
+      and (vim.api.nvim_buf_get_name(buf) ~= "" or bo.buftype ~= "" or bo.modified)
+    then
+      return false
+    end
+  end
+  return true
+end
+
 function M.load()
   local path = file()
   if vim.fn.filereadable(path) == 0 then
@@ -73,6 +87,11 @@ function M.load()
   end
   if vim.fn.filereadable(path) == 1 then
     source(path)
+    -- Saved from an empty window: files only in the buffer list. mini.starter skips listed buffers, so nothing would draw
+    if shows_nothing() and _G.MiniStarter then
+      vim.cmd("silent! tabonly | silent! only")
+      MiniStarter.open()
+    end
   end
 end
 
