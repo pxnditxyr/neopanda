@@ -28,6 +28,10 @@ trap 'rm -f "$result"' EXIT
   local ok, err = pcall(vim.api.nvim_exec_autocmds, 'User', { pattern = 'DeferredUIEnter' })
   if not ok then table.insert(out, 'DeferredUIEnter: ' .. err) end
   vim.cmd('checkhealth neopanda vim.pack')
+  -- Async: the filetype is set when every check is done
+  if not vim.wait(30000, function() return vim.bo.filetype == 'checkhealth' end) then
+    table.insert(out, 'checkhealth did not finish')
+  end
   for _, line in ipairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
     if line:find('ERROR') then table.insert(out, line) end
   end

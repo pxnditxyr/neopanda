@@ -33,6 +33,7 @@ offline() { GIT_ALLOW_PROTOCOL=none npd; }
 # Plugins whose installed rev differs from the lockfile's, or are missing. Empty file = in sync.
 out_of_sync() { # out_of_sync <lockfile>
   local out="$WORK/out"
+  rm -f "$out"
   npd -c "lua (function()
     local want = vim.json.decode(table.concat(vim.fn.readfile('$1'), '\n')).plugins
     local bad = {}
@@ -43,17 +44,20 @@ out_of_sync() { # out_of_sync <lockfile>
     vim.list_extend(bad, vim.tbl_keys(want))
     vim.fn.writefile(bad, '$out')
   end)()"
-  [[ ! -s "$out" ]]
+  [[ -e "$out" && ! -s "$out" ]]
 }
 
 health_clean() {
   local out="$WORK/health"
+  rm -f "$out"
   npd -c "lua (function()
     vim.cmd('checkhealth neopanda vim.pack')
+    -- Async: the filetype is set when every check is done
+    local done = vim.wait(30000, function() return vim.bo.filetype == 'checkhealth' end)
     local bad = vim.tbl_filter(function(l) return l:find('ERROR') end, vim.api.nvim_buf_get_lines(0, 0, -1, false))
-    vim.fn.writefile(bad, '$out')
+    vim.fn.writefile(done and bad or { 'checkhealth did not finish' }, '$out')
   end)()"
-  [[ ! -s "$out" ]]
+  [[ -e "$out" && ! -s "$out" ]]
 }
 
 echo "🆕 first start"
