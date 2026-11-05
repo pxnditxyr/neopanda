@@ -6,35 +6,18 @@ local M = {}
 local theme = require("pxndxs.theme")
 local nf = require("pxndxs.settings").nerd_font
 local glyph = {
-  left = nf and "\u{e0b6} " or "  ",
-  right = nf and " \u{e0b4}" or "  ",
+  left = nf and "\u{e0b6}" or " ",
+  right = nf and "\u{e0b4}" or " ",
   changed = nf and "●" or "+",
 }
 local chrome = 5 -- cells around a label: pill edges, padding and the gap to the next one
 local name_width = { min = 6, max = 24 }
 local counter_width = 10 -- room for the "+N" of the tabs that do not fit, both sides
 
-local function color(name, attr)
-  return vim.api.nvim_get_hl(0, { name = name, link = false })[attr]
-end
+local color, mix = theme.color, theme.mix
 
 local tint -- background of the pills that are not current
 local icon_groups = {}
-
--- theme.mix as a number, what the contrast math takes
-local function mix(a, b, t)
-  return tonumber(theme.mix(a, b, t):sub(2), 16)
-end
-
-local function luminance(c)
-  local function lin(x)
-    x = x / 255
-    return x <= 0.04045 and x / 12.92 or ((x + 0.055) / 1.055) ^ 2.4
-  end
-  return 0.2126 * lin(bit.rshift(c, 16))
-    + 0.7152 * lin(bit.band(bit.rshift(c, 8), 255))
-    + 0.0722 * lin(bit.band(c, 255))
-end
 
 -- `c` moved toward `to` just enough for 3:1 on `on` (WCAG, symbols), keeping as much of its color as it can
 local function stand_out(c, on, to)
@@ -43,8 +26,7 @@ local function stand_out(c, on, to)
   end
   for t = 0, 0.9, 0.1 do
     local mixed = mix(c, to, t)
-    local a, b = luminance(mixed), luminance(on)
-    if (math.max(a, b) + 0.05) / (math.min(a, b) + 0.05) >= 3 then
+    if theme.contrast(mixed, on) >= 3 then
       return mixed
     end
   end
@@ -62,7 +44,7 @@ local function set_highlights()
   end
   -- The gaps between pills; themes bring reverse or a mid gray here
   hl("TabLineFill", { bg = not theme.transparent and bg or nil })
-  hl("PxTabCount", { fg = fg and bg and theme.mix(fg, bg, 0.3) or color("Comment", "fg") })
+  hl("PxTabCount", { fg = fg and bg and mix(fg, bg, 0.3) or color("Comment", "fg") })
   hl("PxTabEdge", { fg = accent })
   hl("PxTabCurrent", { fg = accent and (bg or 0), bg = accent, bold = true, reverse = not accent })
   hl("PxTabTintEdge", { fg = tint })
@@ -106,8 +88,11 @@ local function tab_info(tab)
     end
   end
   local buf = vim.api.nvim_win_get_buf(main_win(tab))
+  if vim.bo[buf].buftype == "terminal" then
+    return { path = "", name = "terminal", count = count, changed = changed }
+  end
   local path = vim.api.nvim_buf_get_name(buf):gsub("/+$", "") -- directories end in /, oil's too
-  local name = vim.bo[buf].buftype == "terminal" and "terminal" or vim.fn.fnamemodify(path, ":t")
+  local name = vim.fn.fnamemodify(path, ":t")
   return { path = path, name = name ~= "" and name or "new", count = count, changed = changed }
 end
 
@@ -119,33 +104,39 @@ local function shorten(name, width)
   return "…" .. vim.fn.strcharpart(name, vim.fn.strchars(name) - width + 1)
 end
 
+-- The cells of a label that do not depend on the name's width
+local function measure(info)
+  info.suffix = (info.count > 1 and " " .. info.count or "")
+    .. (info.changed and " " .. glyph.changed or "")
+  info.icon = ""
+  if nf and info.path ~= "" and package.loaded["mini.icons"] then
+    local icon, icon_hl = MiniIcons.get("file", info.path)
+    info.icon, info.icon_hl = icon .. " ", icon_hl
+  end
+  info.fixed = chrome + vim.fn.strdisplaywidth(info.icon .. info.suffix)
+  info.name_cells = vim.fn.strdisplaywidth(info.name)
+end
+
 local function label(info, n, is_current, width)
   local name = shorten(info.name, width)
-  local count = info.count > 1 and " " .. info.count or ""
-  local icon, icon_hl = "", nil
-  if nf and info.path ~= "" and package.loaded["mini.icons"] then
-    icon, icon_hl = MiniIcons.get("file", info.path)
-    icon = icon .. " "
-  end
   local edge, body, dot = "PxTabTintEdge", "PxTabTint", "PxTabChanged"
   if is_current then
     edge, body, dot = "PxTabEdge", "PxTabCurrent", "PxTabChangedCurrent"
   end
-  local parts = { "%#", edge, "#", glyph.left:sub(1, -2), "%#", body, "# " }
-  if icon_hl and not is_current then
-    vim.list_extend(parts, { "%#", icon_group(icon_hl), "#", icon, "%#", body, "#" })
+  local parts = { "%#", edge, "#", glyph.left, "%#", body, "# " }
+  if info.icon_hl and not is_current then
+    vim.list_extend(parts, { "%#", icon_group(info.icon_hl), "#", info.icon, "%#", body, "#" })
   else
-    parts[#parts + 1] = icon
+    parts[#parts + 1] = info.icon
   end
-  parts[#parts + 1] = name:gsub("%%", "%%%%") .. count
+  parts[#parts + 1] = name:gsub("%%", "%%%%") .. (info.count > 1 and " " .. info.count or "")
   if info.changed then
     vim.list_extend(parts, { " %#", dot, "#", glyph.changed, "%#", body, "#" })
   end
-  vim.list_extend(parts, { " %#", edge, "#", glyph.right:sub(2) })
-  local suffix = count .. (info.changed and " " .. glyph.changed or "")
+  vim.list_extend(parts, { " %#", edge, "#", glyph.right })
   return {
     text = ("%%%dT%s%%T%%#TabLineFill# "):format(n, table.concat(parts)),
-    width = chrome + vim.fn.strdisplaywidth(icon .. name .. suffix),
+    width = info.fixed + vim.fn.strdisplaywidth(name),
   }
 end
 
@@ -163,19 +154,28 @@ function M.render()
     if names[info.name] > 1 and info.path ~= "" then
       info.name = vim.fn.fnamemodify(info.path, ":h:t") .. "/" .. info.name -- two tabs, same file name
     end
+    measure(info)
   end
 
   -- Names shrink only as far as needed to fit, and the current one never
-  local labels, total
-  for width = name_width.max, name_width.min, -1 do
-    labels, total = {}, 0
+  local width = name_width.max
+  while width > name_width.min do
+    local needed = 0
     for i, info in ipairs(infos) do
-      labels[i] = label(info, i, i == current, i == current and name_width.max or width)
-      total = total + labels[i].width
+      needed = needed
+        + info.fixed
+        + math.min(info.name_cells, i == current and name_width.max or width)
     end
-    if total <= columns then
+    if needed <= columns then
       break
     end
+    width = width - 1
+  end
+
+  local labels, total = {}, 0
+  for i, info in ipairs(infos) do
+    labels[i] = label(info, i, i == current, i == current and name_width.max or width)
+    total = total + labels[i].width
   end
 
   -- The current tab always shows; the rest fill around it, and what does not fit is counted

@@ -38,16 +38,14 @@ end
 apply()
 
 -- Colors derived from the colorscheme
-local mix = require("pxndxs.theme").mix
-local function color(group, attr)
-  return vim.api.nvim_get_hl(0, { name = group, link = false })[attr]
-end
+local theme = require("pxndxs.theme")
+local mix, color = theme.mix, theme.color
 
--- Ghost text: the hint accent dimmed toward the background. Dimmer than comments and a different hue
--- (catppuccin: teal #689796 vs gray italic comments), still ~5:1 contrast. NES diff: red struck-out
+-- Ghost text: the hint accent dimmed toward the background, in a different hue from comments.
+-- NES diff: red struck-out
 -- deletion and green addition, each on a faint tint of its own color.
 local function set_highlights()
-  local bg = require("pxndxs.theme").bg or 0x000000
+  local bg = theme.bg or 0x000000
   local hint = color("DiagnosticHint", "fg") or color("Comment", "fg") or 0x808080
   vim.api.nvim_set_hl(0, "ComplHint", { fg = mix(hint, bg, 0.35) })
   vim.api.nvim_set_hl(0, "ComplHintMore", { fg = mix(hint, bg, 0.2), bold = true })

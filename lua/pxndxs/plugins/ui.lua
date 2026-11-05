@@ -7,8 +7,6 @@ return {
     after = function()
       -- Integrations are detected from the installed plugins (vim.pack)
       require("catppuccin").setup({ flavour = "mocha" })
-      -- After setup: the remembered theme can be this one
-      require("pxndxs.theme").apply()
     end,
   },
   {
@@ -104,18 +102,33 @@ return {
           vim.wo[0][0].scrolloff = 0
         end,
       })
+      local function each_starter(fn)
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype == "ministarter" then
+            fn(win, buf)
+          end
+        end
+      end
       -- After starter re-centers on resize, scroll back to the top (the view keeps the old cursor line)
       vim.api.nvim_create_autocmd("VimResized", {
         group = group,
         callback = vim.schedule_wrap(function()
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "ministarter" then
-              vim.api.nvim_win_call(win, function()
-                vim.fn.winrestview({ topline = 1 })
-              end)
-            end
-          end
+          each_starter(function(win)
+            vim.api.nvim_win_call(win, function()
+              vim.fn.winrestview({ topline = 1 })
+            end)
+          end)
         end),
+      })
+      -- A new colorscheme clears the gradient's groups, which only the content hook creates
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = group,
+        callback = function()
+          each_starter(function(_, buf)
+            starter.refresh(buf)
+          end)
+        end,
       })
     end,
   },

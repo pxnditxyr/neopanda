@@ -18,7 +18,9 @@ fail() {
 skip() { printf '⏭️  %s\n' "$*"; }
 
 result="$(mktemp)"
-trap 'rm -f "$result"' EXIT
+XDG_STATE_HOME="$(mktemp -d)" # sessions and the remembered theme stay out of the real ones
+export XDG_STATE_HOME
+trap 'rm -rf "$result" "$XDG_STATE_HOME"' EXIT
 
 # Collects startup errors, errors of the plugins loaded after the UI (lze's DeferredUIEnter, which never fires
 # headless) and every ERROR line of the health report. Runs in an empty dir: no session is restored or saved.
@@ -59,13 +61,15 @@ trap 'rm -f "$result"' EXIT
   for _, line in ipairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
     if line:find('ERROR') then table.insert(out, line) end
   end
+  table.insert(out, 'finished') -- nvim exits 0 when this code aborts: an empty file must not pass
   vim.fn.writefile(out, '$result')
-  vim.cmd('qa!')
-end)()" >/dev/null 2>&1) || fail "nvim exited with an error"
+end)()" -c 'qa!' </dev/null >/dev/null 2>&1) || fail "nvim exited with an error" # outside the Lua: quits after an error too
 
-if [[ -s "$result" ]]; then
+if [[ "$(tail -n 1 "$result")" != finished ]]; then
+  fail "the checks did not finish: an error stopped them"
+elif [[ "$(wc -l <"$result")" -gt 1 ]]; then
   fail "config / health:"
-  sed 's/^/   /' "$result"
+  sed -e '$d' -e 's/^/   /' "$result"
 else
   pass "config loads, health has no ERROR"
 fi

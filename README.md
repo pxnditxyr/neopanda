@@ -37,7 +37,7 @@ Start it with `npd` (or `neopanda`).
 
 ## Install
 
-### Nix (macOS / NixOS / Linux)
+### Nix (Apple Silicon macOS / NixOS / Linux)
 
 No clone. Try it without installing:
 

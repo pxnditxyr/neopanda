@@ -24,3 +24,4 @@ require("pxndxs.git")
 require("pxndxs.ai")
 require("pxndxs.treesitter")
 require("pxndxs.pack")
+require("pxndxs.theme").apply() -- after the plugins: the remembered theme can be one of them

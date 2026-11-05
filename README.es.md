@@ -40,7 +40,7 @@ Se abre con `npd` (o `neopanda`).
 
 ## Instalación
 
-### Nix (macOS / NixOS / Linux)
+### Nix (Apple Silicon macOS / NixOS / Linux)
 
 Sin clonar. Pruébalo sin instalar:
 

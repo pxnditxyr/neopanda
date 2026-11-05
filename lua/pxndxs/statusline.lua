@@ -29,9 +29,7 @@ local modes = {
   nt = { "N-TERM", "Function", "🐙" },
 }
 
-local function color(name, attr)
-  return vim.api.nvim_get_hl(0, { name = name, link = false })[attr]
-end
+local color = require("pxndxs.theme").color
 
 -- Mode pills: the accent of each mode as background
 local function set_highlights()
